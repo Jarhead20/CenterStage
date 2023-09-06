@@ -8,7 +8,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class DriveSubsystem extends SubsystemBase {
     MecanumDrive drive;
-    private MotorEx fL, fR, bL, bR;
+    private final MotorEx fL;
+    private final MotorEx fR;
+    private final MotorEx bL;
+    private final MotorEx bR;
     public DriveSubsystem(final HardwareMap hMap){
         fL = new MotorEx(hMap, "fL", Motor.GoBILDA.RPM_312);
         fR = new MotorEx(hMap, "fR", Motor.GoBILDA.RPM_312);
