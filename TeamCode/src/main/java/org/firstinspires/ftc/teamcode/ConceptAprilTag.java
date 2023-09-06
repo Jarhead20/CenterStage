@@ -27,21 +27,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import android.util.Size;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import java.util.List;
-import android.util.Size;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 /**
  * This 2023-2024 OpMode illustrates the basics of AprilTag recognition and pose estimation,
@@ -50,8 +62,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: AprilTag", group = "Concept")
-@Disabled
+@TeleOp(name = "Concept: AprilTag2", group = "Concept")
 public class ConceptAprilTag extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -68,7 +79,7 @@ public class ConceptAprilTag extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         initAprilTag();
 
         // Wait for the DS start button to be touched.
@@ -81,8 +92,7 @@ public class ConceptAprilTag extends LinearOpMode {
             while (opModeIsActive()) {
 
                 telemetryAprilTag();
-
-                // Push telemetry to the Driver Station.
+                
                 telemetry.update();
 
                 // Save CPU resources; can resume streaming when needed.
@@ -107,20 +117,31 @@ public class ConceptAprilTag extends LinearOpMode {
      */
     private void initAprilTag() {
 
+        AprilTagLibrary library = new AprilTagLibrary.Builder()
+                .addTag(583, "MEOW",
+                        0.099, new VectorF(0,-1,0.2f), DistanceUnit.METER,
+                        new Quaternion((float)(Math.PI/2), 0, 0, 1, 10))
+                .addTag(584, "WOOF",
+                        0.322, new VectorF(0,1,0), DistanceUnit.METER,
+                        Quaternion.identityQuaternion())
+                .addTag(585, "OINK",
+                        0.166, new VectorF(0,0,1), DistanceUnit.METER,
+                        Quaternion.identityQuaternion())
+                .build();
+
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
             //.setDrawAxes(false)
             //.setDrawCubeProjection(false)
             .setDrawTagOutline(true)
             .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-            .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .setTagLibrary(library)
             .setOutputUnits(DistanceUnit.METER, AngleUnit.DEGREES)
 
             // == CAMERA CALIBRATION ==
             // If you do not manually specify calibration parameters, the SDK will attempt
             // to load a predefined calibration for your camera.
-            .setLensIntrinsics(1389.80870649, 1389.80870649, 663.26859617, 399.04504219)
-
+            .setLensIntrinsics(1389.80870649, 1389.80870649, 663.268596171, 399.045042197)
             // ... these parameters are fx, fy, cx, cy.
 
             .build();
@@ -136,7 +157,7 @@ public class ConceptAprilTag extends LinearOpMode {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(1280, 720));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);
@@ -154,7 +175,6 @@ public class ConceptAprilTag extends LinearOpMode {
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
-
         // Disable or re-enable the aprilTag processor at any time.
         //visionPortal.setProcessorEnabled(aprilTag, true);
 
@@ -173,14 +193,26 @@ public class ConceptAprilTag extends LinearOpMode {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (meter)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (meter, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                AprilTagPoseFtc apose = detection.ftcPose;
+
+                float[] vec = detection.metadata.fieldPosition.added(new VectorF((float) detection.ftcPose.x, (float) detection.ftcPose.y, (float) detection.ftcPose.z)).getData();
+                float angle = (float) (-detection.ftcPose.yaw);
+                float[] tagPose = detection.metadata.fieldPosition.getData();
+                double[] cameraPoints = rotatePoint(vec[0], vec[1], tagPose[0], tagPose[1], angle);
+                telemetry.addLine(String.format("New XY rot %6.1f %6.1f %6.1f  (meter)", cameraPoints[0], cameraPoints[1], angle));
+                telemetry.addLine(String.format("New XY %6.1f %6.1f  (meter)", vec[0], vec[1]));
+
+                telemetry.addLine(String.format("XYZ %6.3f %6.3f %6.3f  (meter)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                telemetry.addLine(String.format("PRY %6.3f %6.3f %6.3f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                telemetry.addLine(String.format("RBE %6.3f %6.3f %6.3f  (meter, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
         }   // end for() loop
+
+        //negative yaw is rotate tag to the left
+        //pitch is up and down +, -
 
         // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
@@ -189,4 +221,16 @@ public class ConceptAprilTag extends LinearOpMode {
 
     }   // end method telemetryAprilTag()
 
-}   // end class
+    public double[] rotatePoint(double rX, double rY, double cX, double cY, double angleInDegrees)
+    {
+        double angleInRadians = Math.toRadians(angleInDegrees);
+        double cosTheta = Math.cos(angleInRadians);
+        double sinTheta = Math.sin(angleInRadians);
+        return new double[]{
+                (cosTheta * (rX - cX) -
+                        sinTheta * (rY - cY) + cX),
+                (sinTheta * (rX - cX) +
+                        cosTheta * (rY - cY) + cY)};
+    }
+
+}
