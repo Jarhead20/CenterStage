@@ -141,7 +141,7 @@ public class ConceptAprilTag extends LinearOpMode {
             // == CAMERA CALIBRATION ==
             // If you do not manually specify calibration parameters, the SDK will attempt
             // to load a predefined calibration for your camera.
-            .setLensIntrinsics(1389.80870649, 1389.80870649, 663.268596171, 399.045042197)
+            .setLensIntrinsics(1805.11209646, 1805.11209646, 1020.05252149, 743.423990613)
             // ... these parameters are fx, fy, cx, cy.
 
             .build();
@@ -157,7 +157,7 @@ public class ConceptAprilTag extends LinearOpMode {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(1280, 720));
+        builder.setCameraResolution(new Size(1920, 1080));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);
