@@ -23,7 +23,15 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
+
 dependencies {
+    implementation 'org.ftclib.ftclib:core:2.0.1' // core
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.11'
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
