@@ -19,7 +19,7 @@ public class AprilTagLocalizerSubsystem extends SubsystemBase {
 
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-    private HardwareMap hMap;
+    private final HardwareMap hMap;
 
     public AprilTagLocalizerSubsystem(HardwareMap hMap){
         this.hMap = hMap;

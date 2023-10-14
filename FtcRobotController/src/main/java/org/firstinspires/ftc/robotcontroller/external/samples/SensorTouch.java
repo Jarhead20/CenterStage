@@ -66,8 +66,14 @@ public class SensorTouch extends LinearOpMode {
         while (opModeIsActive()) {
 
             // send the info back to driver station using telemetry function.
+<<<<<<< HEAD:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorTouch.java
             if (touchSensor.isPressed()) {
                 telemetry.addData("Touch Sensor", "Is Pressed");
+=======
+            // if the digital channel returns true it's HIGH and the button is unpressed.
+            if (digitalTouch.getState()) {
+                telemetry.addData("Digital Touch", "Is Not Pressed");
+>>>>>>> fb6ab11 (ftc module change):FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorDigitalTouch.java
             } else {
                 telemetry.addData("Touch Sensor", "Is Not Pressed");
             }
