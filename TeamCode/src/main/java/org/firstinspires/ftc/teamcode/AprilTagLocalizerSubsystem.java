@@ -53,7 +53,7 @@ public class AprilTagLocalizerSubsystem extends SubsystemBase {
         builder.setCameraResolution(new Size(1280, 720));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableCameraMonitoring(true);
+//        builder.enableCameraMonitoring(true);
 
         builder.addProcessor(aprilTag);
 
