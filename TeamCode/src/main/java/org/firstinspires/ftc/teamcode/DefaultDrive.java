@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.function.DoubleSupplier;
@@ -24,12 +22,13 @@ public class DefaultDrive extends CommandOpMode {
     public void initialize() {
 
         GamepadEx driverOp = new GamepadEx(gamepad1);
-//        drive = new DriveSubsystem(hardwareMap);
-        LiftSubSystem lift = new LiftSubSystem("leftLift", "rightLift", hardwareMap, telemetry, driverOp);
+        GamepadEx auxDriver = new GamepadEx(gamepad2);
+        DriveSubsystem drive = new DriveSubsystem(hardwareMap, driverOp);
+        LiftSubSystem lift = new LiftSubSystem("leftLift", "rightLift", hardwareMap, telemetry, auxDriver);
 
-        schedule(new RunCommand(lift::printPos));
+        schedule(new RunCommand(lift::update));
         schedule(new RunCommand(telemetry::update));
-
+        schedule(new RunCommand(drive::drive));
     }
 
 //    @Override

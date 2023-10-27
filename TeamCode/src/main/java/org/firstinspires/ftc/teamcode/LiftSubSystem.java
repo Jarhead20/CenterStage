@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.telecom.TelecomManager;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.hardware.HardwareDevice;
+import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
@@ -20,15 +18,25 @@ public class LiftSubSystem extends SubsystemBase {
     public Motor leftMotor;
     public Motor rightMotor;
     public Motor intake;
+    public Servo leftServo;
+    public Servo rightServo;
+    public Servo gripper;
     public MotorGroup liftGroup;
     Telemetry telemetry;
-    public static double multiplier = 3;
+    public static double multiplier = 6;
     public static int top = 700;
-    public static int bottom = 400;
+    public static int bottom = 300;
     public static double pCoefficient = 0.06;
-    public static double motorPower = 0.5;
+    public static double motorPower = 0.3;
+    public static double servoFlipPos = 0.4;
     double target = 0;
+    double targetServoAngle = 0;
     GamepadEx gamepadEx;
+
+
+    boolean gripperOpen = false;
+    ToggleButtonReader xReader;
+    ToggleButtonReader bumperReader;
 
     public enum LiftPos{
         UP,
@@ -51,54 +59,71 @@ public class LiftSubSystem extends SubsystemBase {
         leftMotor.setDistancePerPulse(1);
         rightMotor.setDistancePerPulse(1);
         intake = new Motor(hMap, "intake");
+        leftServo = hMap.get(Servo.class, "leftServo");
+        rightServo = hMap.get(Servo.class, "rightServo");
+        gripper = hMap.get(Servo.class, "gripper");
 
-//        leftMotor.set(0.05);
-//        rightMotor.set(0.05);
+        xReader = new ToggleButtonReader(
+                gamepadEx, GamepadKeys.Button.X
+        );
+
+        bumperReader = new ToggleButtonReader(
+                gamepadEx, GamepadKeys.Button.RIGHT_BUMPER
+        );
+
         this.telemetry = telemetry;
 
     }
 
-    public void printPos(){
-
-        telemetry.addData("leftLift", leftMotor.getDistance() + " " + leftMotor.get());
-        telemetry.addData("rightLift",rightMotor.getDistance() + " " + rightMotor.get());
-
+    public void update(){
         telemetry.addData("target", target);
         leftMotor.setPositionCoefficient(pCoefficient);
         rightMotor.setPositionCoefficient(pCoefficient);
 
         if(gamepadEx.getButton(GamepadKeys.Button.LEFT_BUMPER)){
             target += gamepadEx.getLeftY() * multiplier;
-            leftMotor.setTargetDistance(target);
-            rightMotor.setTargetDistance(target);
-
-        }
-        else {
-            if(gamepadEx.getButton(GamepadKeys.Button.A)){
+            if(gamepadEx.getButton(GamepadKeys.Button.DPAD_UP)){
                 lift(LiftPos.UP);
-            } else if (gamepadEx.getButton(GamepadKeys.Button.B)) {
+            } else if (gamepadEx.getButton(GamepadKeys.Button.DPAD_DOWN)) {
                 lift(LiftPos.DOWN);
             }
+            leftMotor.setTargetDistance(target);
+            rightMotor.setTargetDistance(target);
         }
+
         leftMotor.set(motorPower);
         rightMotor.set(motorPower);
 
+        if(bumperReader.getState()) gripper.setPosition(0.9);
+        else gripper.setPosition(1);
 
+        if(xReader.getState()) intake.set(-1);
+        else intake.set(0);
 
-//        moveLeft((int) target);
+        if(gamepadEx.getButton(GamepadKeys.Button.Y))
+            intake.set(1);
+
+        if(leftMotor.getDistance() >= 700){
+            leftServo.setPosition(servoFlipPos + (gamepadEx.getRightY()*0.1));
+            rightServo.setPosition(1.0 - (servoFlipPos +(gamepadEx.getRightY()*0.1)));
+        } else {
+            leftServo.setPosition(0.05 + (gamepadEx.getRightY()*0.05));
+            rightServo.setPosition(1.0 - (0.05 + gamepadEx.getRightY()*0.05));
+        }
+
+        xReader.readValue();
+        bumperReader.readValue();
     }
 
     public void lift(LiftPos pos){
         switch (pos){
             case UP:
-                leftMotor.setTargetDistance(top);
-                rightMotor.setTargetDistance(top);
+                target = top;
 //                leftMotor.set(1);
 //                rightMotor.set(1);
                 break;
             case DOWN:
-                leftMotor.setTargetDistance(bottom);
-                rightMotor.setTargetDistance(bottom);
+                target = bottom;
 //                leftMotor.set(1);
 //                rightMotor.set(1);
                 break;

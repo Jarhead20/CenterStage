@@ -15,5 +15,6 @@ public class MotorTest extends OpMode {
     @Override
     public void loop() {
         motor.setPower(gamepad1.left_stick_y);
+        telemetry.addData("test", motor.getCurrentPosition());
     }
 }
