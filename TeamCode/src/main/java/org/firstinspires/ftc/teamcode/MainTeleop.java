@@ -53,5 +53,7 @@ public class MainTeleop extends OpModeTemplate {
         );
 
         lift.updateTarget(gamepad2.left_stick_y, gamepad2.right_stick_y);
+
+        climb.control(gamepad2.left_trigger - gamepad2.right_trigger);
     }
 }

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.commands.OpModeTemplate;
-import org.firstinspires.ftc.teamcode.vision.RedTeamShippingElementPipeline;
+import org.firstinspires.ftc.teamcode.vision.TeamShippingElementPipeline;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous
 public class VisionTestAuto extends OpModeTemplate {
 
-    private RedTeamShippingElementPipeline.Randomization randomization;
+    private TeamShippingElementPipeline.Randomization randomization;
     public static double r1x = 0;
     public static double r1y = 0;
     public static double r2x = 50;
@@ -26,7 +26,8 @@ public class VisionTestAuto extends OpModeTemplate {
         initHardware(true);
 
         OpenCvWebcam webcam;
-        RedTeamShippingElementPipeline pipeline = new RedTeamShippingElementPipeline(
+        TeamShippingElementPipeline pipeline = new TeamShippingElementPipeline(
+                Alliance.RED,
                 new Point(r1x, r1y),
                 new Point(r2x, r2y),
                 new Point(r3x, r3y));

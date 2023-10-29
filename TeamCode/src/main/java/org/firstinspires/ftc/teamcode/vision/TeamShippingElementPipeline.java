@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+import org.firstinspires.ftc.teamcode.commands.OpModeTemplate;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -7,7 +8,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
-public class RedTeamShippingElementPipeline extends OpenCvPipeline {
+public class TeamShippingElementPipeline extends OpenCvPipeline {
     private Point region1Pos;
     private Point region2Pos;
     private Point region3Pos;
@@ -18,6 +19,7 @@ public class RedTeamShippingElementPipeline extends OpenCvPipeline {
     private static final Scalar BLUE = new Scalar(0, 0, 255);
     private static final Scalar GREEN = new Scalar(0, 255, 0);
 
+    private final OpModeTemplate.Alliance alliance;
     private Rect leftRectangle;
     private Rect centerRectangle;
     private Rect rightRectangle;
@@ -31,9 +33,10 @@ public class RedTeamShippingElementPipeline extends OpenCvPipeline {
 
     private Randomization randomization;
 
-    public RedTeamShippingElementPipeline(Point region1Pos,
-                                          Point region2Pos,
-                                          Point region3Pos) {
+    public TeamShippingElementPipeline(OpModeTemplate.Alliance alliance, Point region1Pos,
+                                       Point region2Pos,
+                                       Point region3Pos) {
+        this.alliance = alliance;
         this.region1Pos = region1Pos;
         this.region2Pos = region2Pos;
         this.region3Pos = region3Pos;
@@ -107,7 +110,7 @@ public class RedTeamShippingElementPipeline extends OpenCvPipeline {
      */
     private void inputToCb(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(YCrCb, cR, 1);
+        Core.extractChannel(YCrCb, cR, this.alliance == OpModeTemplate.Alliance.RED ? 1 : 2);
     }
 
     public enum Randomization {

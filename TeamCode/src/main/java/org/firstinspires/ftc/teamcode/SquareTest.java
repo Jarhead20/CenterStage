@@ -11,10 +11,9 @@ public class SquareTest extends OpModeTemplate {
         initHardware(true);
         schedule(new SequentialCommandGroup(
                 new DriveDistance(50, 1,0,0.5, drive),
-                new DriveDistance(50, 1,0,0.5, drive),
-                new DriveDistance(50, 1,0,0.5, drive),
-                new DriveDistance(50, 1,0,0.5, drive)
-
+                new DriveDistance(50, 0,1,0.5, drive),
+                new DriveDistance(50, -1,0,0.5, drive),
+                new DriveDistance(50, 0,-1,0.5, drive)
         ));
     }
 }

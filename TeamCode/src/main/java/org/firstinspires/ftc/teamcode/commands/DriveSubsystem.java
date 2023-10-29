@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -8,13 +9,14 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Config
 public class DriveSubsystem extends SubsystemBase {
     MecanumDrive drive;
     private final MotorEx fL;
     private final MotorEx fR;
     private final MotorEx bL;
     private final MotorEx bR;
-    private final double WHEEL_DIAMETER = 9.6; //cm
+    public static double WHEEL_DIAMETER = 10.33; //cm effective wheel diameter with 26:28 ratio on the dt motors
 
     private final Motor.Encoder fLE, fRE, bLE, bRE;
     public DriveSubsystem(final HardwareMap hMap){

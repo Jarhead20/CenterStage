@@ -18,16 +18,12 @@ abstract public class OpModeTemplate extends CommandOpMode {
         lift = new LiftSubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap);
         climb = new ClimbSubsystem(hardwareMap);
-
         plane = new PlaneSubsystem(hardwareMap);
-        if(isAuto)
-            register(intake, drive, lift);
-        else
-            register(intake, drive, lift, plane);
+
+        register(intake, drive, lift, plane, climb);
 
         driverGamepad = new GamepadEx(gamepad1);
         secondaryGamepad = new GamepadEx(gamepad2);
-
     }
 
     public enum Alliance {
