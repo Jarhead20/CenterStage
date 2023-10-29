@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
@@ -14,18 +14,30 @@ public class DriveSubsystem extends SubsystemBase {
     private final MotorEx fR;
     private final MotorEx bL;
     private final MotorEx bR;
-    private GamepadEx gamepadEx;
-    public DriveSubsystem(final HardwareMap hMap, GamepadEx gamepadEx){
+    private final double WHEEL_DIAMETER = 9.6; //cm
+
+    private final Motor.Encoder fLE, fRE, bLE, bRE;
+    public DriveSubsystem(final HardwareMap hMap){
         fL = new MotorEx(hMap, "frontLeft", Motor.GoBILDA.RPM_312);
         fR = new MotorEx(hMap, "frontRight", Motor.GoBILDA.RPM_312);
         bL = new MotorEx(hMap, "backLeft", Motor.GoBILDA.RPM_312);
         bR = new MotorEx(hMap, "backRight", Motor.GoBILDA.RPM_312);
+        fLE = fL.encoder;
+        fRE = fR.encoder;
+        bLE = bL.encoder;
+        bRE = bR.encoder;
         drive = new MecanumDrive(fL, fR, bL, bR);
-        this.gamepadEx = gamepadEx;
     }
 
-    public void drive(){
-        drive(-gamepadEx.getLeftX(), -gamepadEx.getLeftY(), -gamepadEx.getRightX(), gamepadEx.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 0.5 : 1);
+    public void resetEncoders(){
+        fL.resetEncoder();
+        fR.resetEncoder();
+        bL.resetEncoder();
+        bR.resetEncoder();
+    }
+
+    public double getAverageEncoderDistance() {
+        return ((fLE.getPosition() + fRE.getPosition() + bLE.getPosition() + bRE.getPosition()) / 4.0) * WHEEL_DIAMETER * Math.PI;
     }
 
     public void autoDrive(double speed){

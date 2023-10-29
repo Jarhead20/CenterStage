@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.commands.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.commands.IntakeSubsystem;
+
 @Config
 @Autonomous(name = "TestAuto")
 public class TestAuto extends LinearOpMode {
@@ -17,10 +19,8 @@ public class TestAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        GamepadEx driverOp = new GamepadEx(gamepad1);
-        GamepadEx auxDriver = new GamepadEx(gamepad2);
-        DriveSubsystem drive = new DriveSubsystem(hardwareMap, driverOp);
-        LiftSubSystem lift = new LiftSubSystem("leftLift", "rightLift", hardwareMap, telemetry, auxDriver);
+        DriveSubsystem drive = new DriveSubsystem(hardwareMap);
+        IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
 
         waitForStart();
         ElapsedTime timer = new ElapsedTime();
@@ -28,14 +28,12 @@ public class TestAuto extends LinearOpMode {
             if(timer.seconds() < driveTime)
                 drive.autoDrive(driveSpeed);
             else if (timer.seconds() < (driveTime+ejectTime) && timer.seconds() > driveTime) {
-                lift.eject();
+                intake.outtake();
                 drive.autoDrive(0);
             } else {
-                lift.stopIntake();
+                intake.stop();
                 drive.autoDrive(0);
             }
-
         }
-
     }
 }
