@@ -9,11 +9,11 @@ import org.opencv.core.Point;
 @Autonomous
 public class RedVisionDriveAuto extends VisionDriveAuto{
     public static double r1x = 0;
-    public static double r1y = 0;
+    public static double r1y = 140;
     public static double r2x = 50;
-    public static double r2y = 0;
+    public static double r2y = 140;
     public static double r3x = 100;
-    public static double r3y = 0;
+    public static double r3y = 140;
     public RedVisionDriveAuto() {
         super(Alliance.RED,
                 new Point(r1x, r1y),
