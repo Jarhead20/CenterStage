@@ -9,11 +9,14 @@ import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Config
 public class LiftSubSystem extends SubsystemBase {
 
@@ -39,18 +42,31 @@ public class LiftSubSystem extends SubsystemBase {
     GamepadEx gamepadEx;
     public double liftOffset = 0;
 
-
-    boolean gripperOpen = false;
     ToggleButtonReader xReader;
     ToggleButtonReader bumperReader;
     ButtonReader upReader;
     ButtonReader downReader;
+
+    ColorRangeSensor colorSensorLeft;
+    ColorRangeSensor colorSensorRight;
 
     public enum LiftPos{
         UP,
         DOWN
     }
     public LiftSubSystem(String leftLift, String rightLift, HardwareMap hMap, Telemetry telemetry, GamepadEx gamepadEx){
+
+        this.gamepadEx = gamepadEx;
+        this.telemetry = telemetry;
+
+        intake = new Motor(hMap, "intake");
+        leftServo = hMap.get(Servo.class, "leftServo");
+        rightServo = hMap.get(Servo.class, "rightServo");
+        gripper = hMap.get(Servo.class, "gripper");
+        gripperNotif = hMap.get(Servo.class, "gripperNotif");
+        colorSensorLeft = hMap.get(ColorRangeSensor.class, "leftSensor");
+        colorSensorRight = hMap.get(ColorRangeSensor.class, "rightSensor");
+
         leftMotor = new MotorEx(hMap,leftLift, Motor.GoBILDA.RPM_312);
         rightMotor = new MotorEx(hMap, rightLift, Motor.GoBILDA.RPM_312);
         rightMotor.setInverted(true);
@@ -61,34 +77,19 @@ public class LiftSubSystem extends SubsystemBase {
 
         leftMotor.resetEncoder();
         rightMotor.resetEncoder();
-        this.gamepadEx = gamepadEx;
+
         leftMotor.setTargetPosition(0);
         rightMotor.setTargetPosition(0);
         leftMotor.setDistancePerPulse(1);
         rightMotor.setDistancePerPulse(1);
-        intake = new Motor(hMap, "intake");
-        leftServo = hMap.get(Servo.class, "leftServo");
-        rightServo = hMap.get(Servo.class, "rightServo");
-        gripper = hMap.get(Servo.class, "gripper");
-        gripperNotif = hMap.get(Servo.class, "gripperNotif");
 
-        xReader = new ToggleButtonReader(
-                gamepadEx, GamepadKeys.Button.X
-        );
 
-        bumperReader = new ToggleButtonReader(
-                gamepadEx, GamepadKeys.Button.RIGHT_BUMPER
-        );
 
-        upReader = new ButtonReader(
-                gamepadEx, GamepadKeys.Button.DPAD_UP
-        );
+        xReader = new ToggleButtonReader(gamepadEx, GamepadKeys.Button.X);
+        bumperReader = new ToggleButtonReader(gamepadEx, GamepadKeys.Button.RIGHT_BUMPER);
+        upReader = new ButtonReader(gamepadEx, GamepadKeys.Button.DPAD_UP);
+        downReader = new ButtonReader(gamepadEx, GamepadKeys.Button.DPAD_DOWN);
 
-        downReader = new ButtonReader(
-                gamepadEx, GamepadKeys.Button.DPAD_DOWN
-        );
-
-        this.telemetry = telemetry;
 
     }
 
@@ -96,6 +97,9 @@ public class LiftSubSystem extends SubsystemBase {
         telemetry.addData("target", target);
         leftMotor.setPositionCoefficient(pCoefficient);
         rightMotor.setPositionCoefficient(pCoefficient);
+
+        telemetry.addData("leftSensor", colorSensorLeft.getDistance(DistanceUnit.CM));
+        telemetry.addData("rightSensor", colorSensorRight.getDistance(DistanceUnit.CM));
 
         if(gamepadEx.getButton(GamepadKeys.Button.LEFT_BUMPER)){
             target += gamepadEx.getLeftY() * multiplier;
