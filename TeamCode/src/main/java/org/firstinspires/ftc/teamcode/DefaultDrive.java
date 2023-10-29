@@ -25,10 +25,11 @@ public class DefaultDrive extends CommandOpMode {
         GamepadEx auxDriver = new GamepadEx(gamepad2);
         DriveSubsystem drive = new DriveSubsystem(hardwareMap, driverOp);
         LiftSubSystem lift = new LiftSubSystem("leftLift", "rightLift", hardwareMap, telemetry, auxDriver);
-
+        PlaneSubsystem plane = new PlaneSubsystem(hardwareMap, auxDriver);
         schedule(new RunCommand(lift::update));
         schedule(new RunCommand(telemetry::update));
         schedule(new RunCommand(drive::drive));
+        schedule(new RunCommand(plane::update));
     }
 
 //    @Override

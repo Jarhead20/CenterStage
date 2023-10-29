@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -24,10 +25,14 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void drive(){
-        drive(-gamepadEx.getLeftX(), -gamepadEx.getLeftY(), -gamepadEx.getRightX(), 0.5);
+        drive(-gamepadEx.getLeftX(), -gamepadEx.getLeftY(), -gamepadEx.getRightX(), gamepadEx.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 0.5 : 1);
     }
 
-    public void drive(double forward, double strafe, double rotation, double speed){
-        drive.driveRobotCentric(forward*speed, strafe*speed, rotation*speed);
+    public void autoDrive(double speed){
+        drive(0, 1, 0, speed);
+    }
+
+    public void drive(double strafe, double forward, double rotation, double speed){
+        drive.driveRobotCentric(strafe*speed, forward*speed, rotation*speed);
     }
 }
