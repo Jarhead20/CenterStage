@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -10,16 +12,17 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
+@Config
 @Autonomous
 public class VisionTestAuto extends OpModeTemplate {
 
     private TeamShippingElementPipeline.Randomization randomization;
-    public static double r1x = 0;
-    public static double r1y = 0;
-    public static double r2x = 50;
-    public static double r2y = 0;
-    public static double r3x = 100;
-    public static double r3y = 0;
+    public static double r1x = 25;
+    public static double r1y = 90;
+    public static double r2x = 150;
+    public static double r2y = 60;
+    public static double r3x = 260;
+    public static double r3y = 90;
 
     @Override
     public void initialize() {
@@ -44,6 +47,7 @@ public class VisionTestAuto extends OpModeTemplate {
             @Override
             public void onOpened() {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(webcam, 20);
             }
 
             @Override

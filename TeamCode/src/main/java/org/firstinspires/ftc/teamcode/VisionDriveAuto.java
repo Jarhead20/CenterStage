@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -56,6 +57,7 @@ public class VisionDriveAuto extends OpModeTemplate {
             @Override
             public void onOpened() {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(webcam, 20);
             }
 
             @Override
@@ -66,7 +68,7 @@ public class VisionDriveAuto extends OpModeTemplate {
 
         while (!isStarted() && !isStopRequested()) {
             randomization = pipeline.getRandomization();
-
+            telemetry.addData("test", drive.getAverageEncoderDistance());
             telemetry.addData("Randomization", randomization);
             telemetry.update();
         }
@@ -74,7 +76,7 @@ public class VisionDriveAuto extends OpModeTemplate {
 
         double driveDist;
         double straftDirection;
-
+        randomization = pipeline.getRandomization();
         switch(randomization){
             case LOCATION_1:
                 driveDist = driveDistanceClose;
@@ -93,12 +95,12 @@ public class VisionDriveAuto extends OpModeTemplate {
                 straftDirection = 0;
                 break;
         }
-
-        schedule(new SequentialCommandGroup(
-                new DriveDistance(strafeDistance, 0, straftDirection, driveSpeed, drive),
-                new DriveDistance(driveDist,1,0,driveSpeed, drive),
-                new RunCommand(intake::outtake),
-                new DriveDistance(backStageDistance, 0, alliance.adjust(1), driveSpeed, drive)
+        schedule(new RunCommand(() -> telemetry.addData("test", drive.getAverageEncoderDistance())),
+                new SequentialCommandGroup(
+                new DriveDistance(driveDist,1,0,driveSpeed, drive)
+//                new DriveDistance(strafeDistance, 0, straftDirection, driveSpeed, drive),
+//                new RunCommand(intake::outtake),
+//                new DriveDistance(backStageDistance, 0, alliance.adjust(1), driveSpeed, drive)
         ));
     }
 }

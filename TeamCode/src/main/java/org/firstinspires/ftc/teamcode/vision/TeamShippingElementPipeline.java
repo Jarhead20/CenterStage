@@ -110,7 +110,7 @@ public class TeamShippingElementPipeline extends OpenCvPipeline {
      */
     private void inputToCb(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(YCrCb, cR, this.alliance == OpModeTemplate.Alliance.RED ? 1 : 2);
+        Core.extractChannel(YCrCb, cR, this.alliance == OpModeTemplate.Alliance.RED ? 2 : 1);
     }
 
     public enum Randomization {

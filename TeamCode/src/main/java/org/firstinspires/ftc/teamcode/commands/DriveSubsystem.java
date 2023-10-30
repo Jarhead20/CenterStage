@@ -24,6 +24,7 @@ public class DriveSubsystem extends SubsystemBase {
         fR = new MotorEx(hMap, "frontRight", Motor.GoBILDA.RPM_312);
         bL = new MotorEx(hMap, "backLeft", Motor.GoBILDA.RPM_312);
         bR = new MotorEx(hMap, "backRight", Motor.GoBILDA.RPM_312);
+
         fLE = fL.encoder;
         fRE = fR.encoder;
         bLE = bL.encoder;
@@ -39,7 +40,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public double getAverageEncoderDistance() {
-        return ((fLE.getPosition() + fRE.getPosition() + bLE.getPosition() + bRE.getPosition()) / 4.0) * WHEEL_DIAMETER * Math.PI;
+        return (((fLE.getPosition() + fRE.getPosition() + bLE.getPosition() + bRE.getPosition()) / 4.0) * WHEEL_DIAMETER * Math.PI)/fL.getCPR();
     }
 
     public void autoDrive(double speed){

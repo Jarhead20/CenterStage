@@ -36,21 +36,17 @@ public class LiftSubsystem extends SubsystemBase {
     public static double pCoefficient = 0.06;
     public static double motorPower = 0.3;
     public static double servoFlipPos = 0.4;
-    public static double gripperNotifBottom = 0;
-    public static double gripperNotifTop = 0.5;
-    public static double pixelNotifBottom = 0;
-    public static double pixelNotifTop = 0.5;
+    public static double gripperNotifBottom = 0.4;
+    public static double gripperNotifTop = 0;
+    public static double pixelNotifBottom = 0.5;
+    public static double pixelNotifTop = 0.9;
     double target = 0;
     public double liftOffset = 0;
     private double pitch = 0;
 
-    ToggleButtonReader xReader;
-    ToggleButtonReader bumperReader;
-    ButtonReader upReader;
-    ButtonReader downReader;
-
     ColorRangeSensor colorSensorLeft;
     ColorRangeSensor colorSensorRight;
+    public static double sensorDistance = 1; //cm
 
     public enum LiftPos{
         UP,
@@ -100,7 +96,7 @@ public class LiftSubsystem extends SubsystemBase {
         leftMotor.set(motorPower);
         rightMotor.set(motorPower);
 
-        if(colorSensorLeft.getDistance(DistanceUnit.CM) < 2 && colorSensorRight.getDistance(DistanceUnit.CM) < 2)
+        if(colorSensorLeft.getDistance(DistanceUnit.CM) < sensorDistance && colorSensorRight.getDistance(DistanceUnit.CM) < sensorDistance)
             pixelNotif.setPosition(pixelNotifTop);
         else
             pixelNotif.setPosition(pixelNotifBottom);
@@ -112,6 +108,7 @@ public class LiftSubsystem extends SubsystemBase {
             leftServo.setPosition(0.05 + (pitch*0.05));
             rightServo.setPosition(1.0 - (0.05 + pitch*0.05));
         }
+        telemetry.update();
     }
 
     public void closeGripper(){

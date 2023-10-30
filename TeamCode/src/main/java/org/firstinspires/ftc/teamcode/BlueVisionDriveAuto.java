@@ -7,12 +7,12 @@ import org.opencv.core.Point;
 @Config
 @Autonomous
 public class BlueVisionDriveAuto extends VisionDriveAuto{
-    public static double r1x = 0;
-    public static double r1y = 140;
-    public static double r2x = 50;
-    public static double r2y = 140;
-    public static double r3x = 100;
-    public static double r3y = 140;
+    public static double r1x = 25;
+    public static double r1y = 90;
+    public static double r2x = 150;
+    public static double r2y = 60;
+    public static double r3x = 260;
+    public static double r3y = 90;
     public BlueVisionDriveAuto() {
         super(Alliance.BLUE,
                 new Point(r1x, r1y),

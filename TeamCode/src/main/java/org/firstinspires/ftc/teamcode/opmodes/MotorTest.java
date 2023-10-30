@@ -9,7 +9,7 @@ public class MotorTest extends OpMode {
     DcMotor motor;
     @Override
     public void init() {
-        motor = hardwareMap.get(DcMotor.class, "intake");
+        motor = hardwareMap.get(DcMotor.class, "frontRight");
     }
 
     @Override

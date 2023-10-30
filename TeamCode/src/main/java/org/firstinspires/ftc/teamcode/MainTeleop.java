@@ -46,13 +46,13 @@ public class MainTeleop extends OpModeTemplate {
         super.run();
 
         drive.drive(
-                -gamepad1.left_stick_x,
+                gamepad1.left_stick_x,
                 -gamepad1.left_stick_y,
                 -gamepad1.right_stick_x,
                 gamepad1.right_bumper ? slowMode : 1
         );
 
-        lift.updateTarget(gamepad2.left_stick_y, gamepad2.right_stick_y);
+        lift.updateTarget(-gamepad2.left_stick_y, gamepad2.right_stick_y);
 
         climb.control(gamepad2.left_trigger - gamepad2.right_trigger);
     }
