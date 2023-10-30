@@ -31,7 +31,7 @@ public class TeamShippingElementPipeline extends OpenCvPipeline {
     private Mat centerRegion;
     private Mat rightRegion;
 
-    private Randomization randomization;
+    private Randomization randomization = Randomization.LOCATION_2;
 
     public TeamShippingElementPipeline(OpModeTemplate.Alliance alliance, Point region1Pos,
                                        Point region2Pos,
