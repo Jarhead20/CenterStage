@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.commands.DriveDistance;
 import org.firstinspires.ftc.teamcode.commands.OpModeTemplate;
+import org.firstinspires.ftc.teamcode.commands.RotateCommand;
 import org.firstinspires.ftc.teamcode.vision.TeamShippingElementPipeline;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -24,7 +25,7 @@ public class VisionDriveAuto extends OpModeTemplate {
     public static double driveDistanceClose = 50;
     public static double driveDistanceFar = 60;
     public static double driveSpeed = 0.5;
-    public static double strafeDistance = 20;
+    public static double rotateAngle = 90;
     public static double backStageDistance = 50;
     private final Alliance alliance;
 
@@ -75,31 +76,34 @@ public class VisionDriveAuto extends OpModeTemplate {
         webcam.closeCameraDevice();
 
         double driveDist;
-        double straftDirection;
+        double rotateDirection;
         randomization = pipeline.getRandomization();
         switch(randomization){
             case LOCATION_1:
                 driveDist = driveDistanceClose;
-                straftDirection = -1;
+                rotateDirection = -1;
                 break;
             case LOCATION_2:
                 driveDist = driveDistanceFar;
-                straftDirection = 0;
+                rotateDirection = 0;
                 break;
             case LOCATION_3:
                 driveDist = driveDistanceClose;
-                straftDirection = 1;
+                rotateDirection = 1;
                 break;
             default:
                 driveDist = driveDistanceClose;
-                straftDirection = 0;
+                rotateDirection = 0;
                 break;
         }
-        schedule(new RunCommand(() -> telemetry.addData("test", drive.getAverageEncoderDistance())),
+        schedule(new RunCommand(() -> {
+            telemetry.addData("test", drive.getAverageEncoderDistance());
+            telemetry.update();
+                }),
                 new SequentialCommandGroup(
-                new DriveDistance(driveDist,1,0,driveSpeed, drive)
-//                new DriveDistance(strafeDistance, 0, straftDirection, driveSpeed, drive),
-//                new RunCommand(intake::outtake),
+                new DriveDistance(driveDist,1,0,driveSpeed, drive),
+                new RotateCommand(rotateAngle, rotateDirection, driveSpeed, drive),
+                new RunCommand(intake::outtake)
 //                new DriveDistance(backStageDistance, 0, alliance.adjust(1), driveSpeed, drive)
         ));
     }

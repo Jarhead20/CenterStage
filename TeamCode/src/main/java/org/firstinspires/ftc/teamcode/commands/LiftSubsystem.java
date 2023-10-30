@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -32,7 +33,6 @@ public class LiftSubsystem extends SubsystemBase {
     Telemetry telemetry;
     public static double multiplier = 6;
     public static int top = 700;
-    public static int bottom = 300;
     public static double pCoefficient = 0.06;
     public static double motorPower = 0.3;
     public static double servoFlipPos = 0.4;
@@ -43,6 +43,16 @@ public class LiftSubsystem extends SubsystemBase {
     double target = 0;
     public double liftOffset = 0;
     private double pitch = 0;
+    private PIDFController pidf;
+    public static double kP = 0.05;
+    public static double kI = 0.001;
+    public static double kD = 0.02;
+    public static double kF = 0.05;
+    public static boolean disable = true;
+    public boolean climbGrab = false;
+    public boolean climbAttach = false;
+    public static double grabPos = 0.5;
+    public static double attachPos = 1;
 
     ColorRangeSensor colorSensorLeft;
     ColorRangeSensor colorSensorRight;
@@ -54,6 +64,8 @@ public class LiftSubsystem extends SubsystemBase {
     }
     public LiftSubsystem(HardwareMap hMap, Telemetry telemetry){
         this.telemetry = telemetry;
+
+        pidf = new PIDFController(kP, kI, kD, kF);
 
         leftServo = hMap.get(Servo.class, "leftServo");
         rightServo = hMap.get(Servo.class, "rightServo");
@@ -67,48 +79,64 @@ public class LiftSubsystem extends SubsystemBase {
         leftMotor = new MotorEx(hMap,"leftLift", Motor.GoBILDA.RPM_312);
         rightMotor = new MotorEx(hMap, "rightLift", Motor.GoBILDA.RPM_312);
         rightMotor.setInverted(true);
-        leftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
-        rightMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
-        leftMotor.setRunMode(Motor.RunMode.PositionControl);
-        rightMotor.setRunMode(Motor.RunMode.PositionControl);
+        leftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        rightMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        leftMotor.setRunMode(Motor.RunMode.RawPower);
+        rightMotor.setRunMode(Motor.RunMode.RawPower);
 
         leftMotor.resetEncoder();
         rightMotor.resetEncoder();
-
-        leftMotor.setTargetPosition(0);
-        rightMotor.setTargetPosition(0);
-        leftMotor.setDistancePerPulse(1);
-        rightMotor.setDistancePerPulse(1);
     }
 
     @Override
     public void periodic(){
-        telemetry.addData("target", target);
-        leftMotor.setPositionCoefficient(pCoefficient);
-        rightMotor.setPositionCoefficient(pCoefficient);
+        pidf.setPIDF(kP, kI, kD, kF);
 
+        telemetry.addData("target", target);
         telemetry.addData("leftSensor", colorSensorLeft.getDistance(DistanceUnit.CM));
         telemetry.addData("rightSensor", colorSensorRight.getDistance(DistanceUnit.CM));
 
         target = Range.clip(target, 0 + liftOffset, 900 + liftOffset);
-        leftMotor.setTargetDistance(target);
-        rightMotor.setTargetDistance(target);
-        leftMotor.set(motorPower);
-        rightMotor.set(motorPower);
+
+        double power = pidf.calculate(leftMotor.getCurrentPosition(), target);
+        telemetry.addData("power", power);
+        if(!disable){
+            leftMotor.set(power);
+            rightMotor.set(power);
+        } else{
+            leftMotor.set(0);
+            rightMotor.set(0);
+        }
 
         if(colorSensorLeft.getDistance(DistanceUnit.CM) < sensorDistance && colorSensorRight.getDistance(DistanceUnit.CM) < sensorDistance)
             pixelNotif.setPosition(pixelNotifTop);
         else
             pixelNotif.setPosition(pixelNotifBottom);
 
-        if(leftMotor.getDistance() >= 700){
-            leftServo.setPosition(servoFlipPos + (pitch*0.1));
-            rightServo.setPosition(1.0 - (servoFlipPos +(pitch*0.1)));
+        if(climbGrab){
+            tilt(grabPos + (pitch*0.05));
+        } else if (climbAttach) {
+            tilt(attachPos + (pitch*0.05));
+        } else if(leftMotor.getDistance() >= 700){
+            tilt(servoFlipPos + (pitch*0.1));
         } else {
-            leftServo.setPosition(0.05 + (pitch*0.05));
-            rightServo.setPosition(1.0 - (0.05 + pitch*0.05));
+            tilt(0.05 + (pitch*0.05));
         }
         telemetry.update();
+    }
+
+    public void tilt(double pitch){
+        leftServo.setPosition(pitch);
+        rightServo.setPosition(1.0 - pitch);
+    }
+
+    public void top(){
+        target = top+liftOffset;
+    }
+
+    public void bottom(){
+        top = (int) target;
+        target = liftOffset;
     }
 
     public void closeGripper(){

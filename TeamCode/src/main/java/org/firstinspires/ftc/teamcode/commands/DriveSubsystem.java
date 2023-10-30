@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,11 +20,13 @@ public class DriveSubsystem extends SubsystemBase {
     public static double WHEEL_DIAMETER = 10.33; //cm effective wheel diameter with 26:28 ratio on the dt motors
 
     private final Motor.Encoder fLE, fRE, bLE, bRE;
+    private RevIMU imu;
     public DriveSubsystem(final HardwareMap hMap){
         fL = new MotorEx(hMap, "frontLeft", Motor.GoBILDA.RPM_312);
         fR = new MotorEx(hMap, "frontRight", Motor.GoBILDA.RPM_312);
         bL = new MotorEx(hMap, "backLeft", Motor.GoBILDA.RPM_312);
         bR = new MotorEx(hMap, "backRight", Motor.GoBILDA.RPM_312);
+        imu = new RevIMU(hMap);
 
         fLE = fL.encoder;
         fRE = fR.encoder;
@@ -41,6 +44,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     public double getAverageEncoderDistance() {
         return (((fLE.getPosition() + fRE.getPosition() + bLE.getPosition() + bRE.getPosition()) / 4.0) * WHEEL_DIAMETER * Math.PI)/fL.getCPR();
+    }
+
+    /**
+     * @return heading in degrees
+     */
+    public double getHeading(){
+        return imu.getHeading();
     }
 
     public void autoDrive(double speed){

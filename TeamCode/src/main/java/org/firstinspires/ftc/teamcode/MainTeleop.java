@@ -36,7 +36,23 @@ public class MainTeleop extends OpModeTemplate {
 
         new GamepadButton(secondaryGamepad, GamepadKeys.Button.DPAD_UP).whenPressed(() -> lift.liftOffset += 5);
         new GamepadButton(secondaryGamepad, GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> lift.liftOffset -= 5);
+        new GamepadButton(secondaryGamepad, GamepadKeys.Button.DPAD_LEFT).toggleWhenPressed(()-> {
+            lift.climbAttach = true;
+            lift.climbGrab = false;
+        }, () -> {
+            lift.climbAttach = false;
+            lift.climbGrab = false;
+        });
+        new GamepadButton(secondaryGamepad, GamepadKeys.Button.DPAD_RIGHT).toggleWhenPressed(()-> {
+            lift.climbGrab = true;
+            lift.climbAttach = false;
+        }, () -> {
+            lift.climbGrab = false;
+            lift.climbAttach = false;
+        });
         new GamepadButton(secondaryGamepad, GamepadKeys.Button.RIGHT_BUMPER).toggleWhenPressed(() -> lift.openGripper(), () -> lift.closeGripper());
+        new GamepadButton(secondaryGamepad, GamepadKeys.Button.A).whenPressed(() -> lift.bottom());
+        new GamepadButton(secondaryGamepad, GamepadKeys.Button.B).whenPressed(() -> lift.top());
 
         new GamepadButton(secondaryGamepad, GamepadKeys.Button.BACK).toggleWhenPressed(() -> plane.launch(),  () -> plane.reset());
     }
