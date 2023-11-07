@@ -26,7 +26,8 @@ public class RotateCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        m_drive.resetEncoders();
+//        m_drive.resetEncoders();
+        m_drive.resetImu();
         m_drive.drive(0, 0, rotate, m_speed);
     }
 
@@ -38,7 +39,7 @@ public class RotateCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_drive.getHeading()) >= m_angle;
+        return Math.abs(m_drive.getHeading()) >= m_angle || rotate == 0;
     }
 
 }

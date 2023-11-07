@@ -10,6 +10,8 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 @Config
 public class DriveSubsystem extends SubsystemBase {
     MecanumDrive drive;
@@ -21,13 +23,16 @@ public class DriveSubsystem extends SubsystemBase {
 
     private final Motor.Encoder fLE, fRE, bLE, bRE;
     private RevIMU imu;
-    public DriveSubsystem(final HardwareMap hMap){
+    private Telemetry telemetry;
+    public DriveSubsystem(final HardwareMap hMap, Telemetry telemetry){
         fL = new MotorEx(hMap, "frontLeft", Motor.GoBILDA.RPM_312);
         fR = new MotorEx(hMap, "frontRight", Motor.GoBILDA.RPM_312);
         bL = new MotorEx(hMap, "backLeft", Motor.GoBILDA.RPM_312);
         bR = new MotorEx(hMap, "backRight", Motor.GoBILDA.RPM_312);
         imu = new RevIMU(hMap);
-
+        imu.init();
+        imu.reset();
+        this.telemetry = telemetry;
         fLE = fL.encoder;
         fRE = fR.encoder;
         bLE = bL.encoder;
@@ -43,7 +48,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public double getAverageEncoderDistance() {
-        return (((fLE.getPosition() + fRE.getPosition() + bLE.getPosition() + bRE.getPosition()) / 4.0) * WHEEL_DIAMETER * Math.PI)/fL.getCPR();
+        double dist = ((((-fLE.getPosition()) + fRE.getPosition() + (-bLE.getPosition()) + (bRE.getPosition())) / 4.0) * WHEEL_DIAMETER * Math.PI)/fL.getCPR();
+        return dist;
     }
 
     /**
@@ -51,6 +57,10 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public double getHeading(){
         return imu.getHeading();
+    }
+
+    public void resetImu(){
+        imu.reset();
     }
 
     public void autoDrive(double speed){

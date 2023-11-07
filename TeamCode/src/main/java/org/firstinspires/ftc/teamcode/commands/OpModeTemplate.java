@@ -14,7 +14,7 @@ abstract public class OpModeTemplate extends CommandOpMode {
 
     protected void initHardware(boolean isAuto) {
 
-        drive = new DriveSubsystem(hardwareMap);
+        drive = new DriveSubsystem(hardwareMap, telemetry);
         drive.resetEncoders();
         lift = new LiftSubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap);

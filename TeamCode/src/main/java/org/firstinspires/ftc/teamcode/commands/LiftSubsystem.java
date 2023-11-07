@@ -38,25 +38,27 @@ public class LiftSubsystem extends SubsystemBase {
     public static double servoFlipPos = 0.4;
     public static double gripperNotifBottom = 0.4;
     public static double gripperNotifTop = 0;
-    public static double pixelNotifBottom = 0.5;
-    public static double pixelNotifTop = 0.9;
+    public static double pixelNotifBottom = 0.9;
+    public static double pixelNotifTop = 0.5;
     double target = 0;
     public double liftOffset = 0;
     private double pitch = 0;
     private PIDFController pidf;
-    public static double kP = 0.05;
+    public static double kP = 0.015;
     public static double kI = 0.001;
-    public static double kD = 0.02;
-    public static double kF = 0.05;
-    public static boolean disable = true;
+    public static double kD = 0.0004;
+    public static double kF = 0.001;
+    public static boolean disable = false;
     public boolean climbGrab = false;
     public boolean climbAttach = false;
     public static double grabPos = 0.5;
     public static double attachPos = 1;
-
+    public static double maxSlidePower = 0.5;
+    public static double minSlidePower = -0.3;
     ColorRangeSensor colorSensorLeft;
     ColorRangeSensor colorSensorRight;
-    public static double sensorDistance = 1; //cm
+    public static double sensorDistance = 1.5; //cm
+    private boolean goingDown = false;
 
     public enum LiftPos{
         UP,
@@ -91,16 +93,19 @@ public class LiftSubsystem extends SubsystemBase {
     @Override
     public void periodic(){
         pidf.setPIDF(kP, kI, kD, kF);
-
+        pidf.setTolerance(30);
         telemetry.addData("target", target);
+        telemetry.addData("current", leftMotor.getCurrentPosition());
         telemetry.addData("leftSensor", colorSensorLeft.getDistance(DistanceUnit.CM));
         telemetry.addData("rightSensor", colorSensorRight.getDistance(DistanceUnit.CM));
 
         target = Range.clip(target, 0 + liftOffset, 900 + liftOffset);
 
         double power = pidf.calculate(leftMotor.getCurrentPosition(), target);
+        power = Range.clip(power, minSlidePower, maxSlidePower);
         telemetry.addData("power", power);
         if(!disable){
+            telemetry.addData("moving slides", power);
             leftMotor.set(power);
             rightMotor.set(power);
         } else{
@@ -117,7 +122,7 @@ public class LiftSubsystem extends SubsystemBase {
             tilt(grabPos + (pitch*0.05));
         } else if (climbAttach) {
             tilt(attachPos + (pitch*0.05));
-        } else if(leftMotor.getDistance() >= 700){
+        } else if(leftMotor.getDistance() >= 700 && !goingDown){
             tilt(servoFlipPos + (pitch*0.1));
         } else {
             tilt(0.05 + (pitch*0.05));
@@ -132,11 +137,14 @@ public class LiftSubsystem extends SubsystemBase {
 
     public void top(){
         target = top+liftOffset;
+        goingDown = false;
     }
 
     public void bottom(){
-        top = (int) target;
-        target = liftOffset;
+        if(target >= 400)
+            top = (int) target;
+        target = liftOffset+50;
+        goingDown = true;
     }
 
     public void closeGripper(){

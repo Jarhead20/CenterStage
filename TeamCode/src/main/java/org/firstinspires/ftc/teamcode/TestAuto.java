@@ -19,7 +19,7 @@ public class TestAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        DriveSubsystem drive = new DriveSubsystem(hardwareMap);
+        DriveSubsystem drive = new DriveSubsystem(hardwareMap, telemetry);
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
 
         waitForStart();

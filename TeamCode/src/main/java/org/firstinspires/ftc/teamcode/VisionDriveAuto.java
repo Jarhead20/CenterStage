@@ -4,9 +4,11 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.commands.DriveDistance;
+import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.commands.RotateCommand;
 import org.firstinspires.ftc.teamcode.vision.TeamShippingElementPipeline;
@@ -22,10 +24,10 @@ public class VisionDriveAuto extends OpModeTemplate {
     private Point r1;
     private Point r2;
     private Point r3;
-    public static double driveDistanceClose = 50;
-    public static double driveDistanceFar = 60;
+    public static double driveDistanceClose = 55;
+    public static double driveDistanceFar = 48;
     public static double driveSpeed = 0.5;
-    public static double rotateAngle = 90;
+    public static double rotateAngle = 70;
     public static double backStageDistance = 50;
     private final Alliance alliance;
 
@@ -69,7 +71,6 @@ public class VisionDriveAuto extends OpModeTemplate {
 
         while (!isStarted() && !isStopRequested()) {
             randomization = pipeline.getRandomization();
-            telemetry.addData("test", drive.getAverageEncoderDistance());
             telemetry.addData("Randomization", randomization);
             telemetry.update();
         }
@@ -77,33 +78,36 @@ public class VisionDriveAuto extends OpModeTemplate {
 
         double driveDist;
         double rotateDirection;
+        double driveDirPark1 = 0;
+        double driveDirPark2 = 0;
         randomization = pipeline.getRandomization();
         switch(randomization){
             case LOCATION_1:
                 driveDist = driveDistanceClose;
-                rotateDirection = -1;
+                rotateDirection = 1;
+                driveDirPark1 = -1;
                 break;
             case LOCATION_2:
                 driveDist = driveDistanceFar;
                 rotateDirection = 0;
+                driveDirPark2 = 1;
                 break;
             case LOCATION_3:
                 driveDist = driveDistanceClose;
-                rotateDirection = 1;
+                rotateDirection = -1;
+                driveDirPark1 = 1;
                 break;
             default:
                 driveDist = driveDistanceClose;
                 rotateDirection = 0;
                 break;
         }
-        schedule(new RunCommand(() -> {
-            telemetry.addData("test", drive.getAverageEncoderDistance());
-            telemetry.update();
-                }),
+        schedule(
                 new SequentialCommandGroup(
                 new DriveDistance(driveDist,1,0,driveSpeed, drive),
                 new RotateCommand(rotateAngle, rotateDirection, driveSpeed, drive),
-                new RunCommand(intake::outtake)
+                new IntakeCommand(-0.2, intake)
+//                new DriveDistance(backStageDistance, driveDirPark1, driveDirPark2, driveSpeed, drive)
 //                new DriveDistance(backStageDistance, 0, alliance.adjust(1), driveSpeed, drive)
         ));
     }

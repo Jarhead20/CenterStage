@@ -14,7 +14,7 @@ public class PlaneSubsystem extends SubsystemBase {
 
     Servo servo;
     public static double planeMin = 0.2;
-    public static double planeMax = 0.75;
+    public static double planeMax = 0.7;
 
     public PlaneSubsystem(HardwareMap hMap){
         servo = hMap.get(Servo.class, "plane");
