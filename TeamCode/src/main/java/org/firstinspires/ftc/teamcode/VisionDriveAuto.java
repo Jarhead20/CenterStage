@@ -21,9 +21,16 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class VisionDriveAuto extends OpModeTemplate {
 
     private TeamShippingElementPipeline.Randomization randomization;
-    private Point r1;
-    private Point r2;
-    private Point r3;
+    public static double r1x = 25;
+    public static double r1y = 90;
+    public static double r2x = 150;
+    public static double r2y = 60;
+    public static double r3x = 260;
+    public static double r3y = 90;
+    private Point r1 = new Point(r1x, r1y);
+    private Point r2 = new Point(r2x, r2y);
+    private Point r3 = new Point(r3x, r3y);
+
     public static double driveDistanceClose = 55;
     public static double driveDistanceFar = 48;
     public static double driveSpeed = 0.5;
@@ -31,11 +38,8 @@ public class VisionDriveAuto extends OpModeTemplate {
     public static double backStageDistance = 50;
     private final Alliance alliance;
 
-    public VisionDriveAuto(Alliance alliance, Point r1, Point r2, Point r3){
+    public VisionDriveAuto(Alliance alliance){
         this.alliance = alliance;
-        this.r1 = r1;
-        this.r2 = r2;
-        this.r3 = r3;
     }
 
     @Override
@@ -105,7 +109,7 @@ public class VisionDriveAuto extends OpModeTemplate {
         schedule(
                 new SequentialCommandGroup(
                 new DriveDistance(driveDist,1,0,driveSpeed, drive),
-                new RotateCommand(rotateAngle, rotateDirection, driveSpeed, drive),
+                new RotateCommand(Math.toRadians(rotateAngle), rotateDirection, driveSpeed, drive),
                 new IntakeCommand(-0.2, intake)
 //                new DriveDistance(backStageDistance, driveDirPark1, driveDirPark2, driveSpeed, drive)
 //                new DriveDistance(backStageDistance, 0, alliance.adjust(1), driveSpeed, drive)

@@ -8,6 +8,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -30,7 +32,15 @@ public class DriveSubsystem extends SubsystemBase {
         bL = new MotorEx(hMap, "backLeft", Motor.GoBILDA.RPM_312);
         bR = new MotorEx(hMap, "backRight", Motor.GoBILDA.RPM_312);
         imu = new RevIMU(hMap);
-        imu.init();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu.init(parameters);
         imu.reset();
         this.telemetry = telemetry;
         fLE = fL.encoder;
@@ -53,10 +63,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return heading in degrees
+     * @return heading in radians
      */
     public double getHeading(){
-        return imu.getHeading();
+        return imu.getAbsoluteHeading();
     }
 
     public void resetImu(){

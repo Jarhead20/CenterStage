@@ -13,7 +13,7 @@ public class RotateCommand extends CommandBase {
     /**
      * Creates a new RotateCommand.
      *
-     * @param angle The angle the robot will rotate in degrees
+     * @param angle The angle the robot will rotate in radians
      * @param speed  The speed at which the robot will rotate
      * @param drive  The drive subsystem on which this command will run
      */
@@ -27,7 +27,6 @@ public class RotateCommand extends CommandBase {
     @Override
     public void initialize() {
 //        m_drive.resetEncoders();
-        m_drive.resetImu();
         m_drive.drive(0, 0, rotate, m_speed);
     }
 

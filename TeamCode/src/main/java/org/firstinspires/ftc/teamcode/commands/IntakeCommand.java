@@ -14,7 +14,6 @@ public class IntakeCommand extends CommandBase {
 
     @Override
     public void initialize() {
-//        m_drive.resetEncoders();
         timer.reset();
         intake.setPower(power);
     }
@@ -23,8 +22,6 @@ public class IntakeCommand extends CommandBase {
     public void end(boolean interrupted) {
         intake.setPower(0);
     }
-
-
     @Override
     public boolean isFinished() {
         return timer.seconds() > 3;
