@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.opencv.core.Point;
 
-@Autonomous
+@Autonomous(name = "RedVisionDriveAuto", group = "Autonomous", preselectTeleOp = "TeleOp")
 public class RedVisionDriveAuto extends VisionDriveAuto{
     public RedVisionDriveAuto() {
         super(Alliance.RED);

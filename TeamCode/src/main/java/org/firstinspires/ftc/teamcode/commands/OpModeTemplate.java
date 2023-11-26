@@ -9,6 +9,7 @@ abstract public class OpModeTemplate extends CommandOpMode {
     protected IntakeSubsystem intake;
     protected PlaneSubsystem plane;
     protected ClimbSubsystem climb;
+    protected ArmSubsystem arm;
     protected GamepadEx driverGamepad;
     protected GamepadEx secondaryGamepad;
 
@@ -20,8 +21,9 @@ abstract public class OpModeTemplate extends CommandOpMode {
         intake = new IntakeSubsystem(hardwareMap);
         climb = new ClimbSubsystem(hardwareMap);
         plane = new PlaneSubsystem(hardwareMap);
+        arm = new ArmSubsystem(hardwareMap);
 
-        register(intake, drive, lift, plane, climb);
+        register(intake, drive, lift, plane, climb, arm);
 
         driverGamepad = new GamepadEx(gamepad1);
         secondaryGamepad = new GamepadEx(gamepad2);
