@@ -12,13 +12,17 @@ public class ArmSubsystem extends SubsystemBase {
     Servo leftGripper;
     Servo rightGripper;
 
-    public static double leftGripperOpen = 0.5;
-    public static double rightGripperOpen = 0.5;
-    public static double leftGripperClosed = 0.0;
+    public static double leftGripperOpen = 0.35;
+    public static double rightGripperOpen = 0.2;
+    public static double leftGripperClosed = 0.13;
     public static double rightGripperClosed = 0.0;
     public static double servoFlipPos = 0.4;
-    public double armAngle = 0;
-    public double wristAngle = 0;
+    public static double armAngle = 0.24;
+    public static double wristAngle = 0.9;
+    public static double leftOffset = 0.0;
+    public static double rightOffset = 0.09;
+    public static double armOffset = 0.0;
+    public static double wristOffset = 0.0;
 
     public ArmSubsystem(HardwareMap hMap){
         leftArmServo = hMap.get(Servo.class, "leftArm");
@@ -31,19 +35,21 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void tilt(double pitch){
-        leftArmServo.setPosition(pitch);
-        rightArmServo.setPosition(pitch);
+        leftArmServo.setPosition(pitch + leftOffset);
+        rightArmServo.setPosition(pitch + rightOffset);
     }
 
     @Override
     public void periodic() {
-        tilt(armAngle);
-        wristServo.setPosition(wristAngle);
+        tilt(armAngle+armOffset);
+        wristServo.setPosition(wristAngle+wristOffset);
     }
 
-    public void update(){
-        tilt(armAngle);
-        wristServo.setPosition(wristAngle);
+    public void update(double armOffset, double wristOffset){
+        this.armOffset = armOffset;
+        this.wristOffset = wristOffset;
+        tilt(armAngle+armOffset);
+        wristServo.setPosition(wristAngle+wristOffset);
     }
 
     public void closeLeftGripper(){leftGripper.setPosition(leftGripperClosed);}

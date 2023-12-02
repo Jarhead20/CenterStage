@@ -20,7 +20,7 @@ public class LiftSubsystem extends SubsystemBase {
     public Motor rightMotor;
     Telemetry telemetry;
     public static double multiplier = 6;
-    public static int top = 700;
+    public static int top = 600;
 
 
     double target = 0;
@@ -65,7 +65,7 @@ public class LiftSubsystem extends SubsystemBase {
         telemetry.addData("target", target);
         telemetry.addData("current", leftMotor.getCurrentPosition());
 
-        target = Range.clip(target, 0 + liftOffset, 900 + liftOffset);
+        target = Range.clip(target, 0 + liftOffset, 650 + liftOffset);
 
         double power = pidf.calculate(leftMotor.getCurrentPosition(), target);
         power = Range.clip(power, minSlidePower, maxSlidePower);

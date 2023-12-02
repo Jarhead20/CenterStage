@@ -20,11 +20,11 @@ abstract public class OpModeTemplate extends CommandOpMode {
         lift = new LiftSubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap);
         climb = new ClimbSubsystem(hardwareMap);
-        plane = new PlaneSubsystem(hardwareMap);
+//        plane = new PlaneSubsystem(hardwareMap);
         arm = new ArmSubsystem(hardwareMap);
 
-        register(intake, drive, lift, plane, climb, arm);
-
+//        register(intake, drive, lift, plane, climb, arm);
+        register(arm, intake, lift, climb, drive);
         driverGamepad = new GamepadEx(gamepad1);
         secondaryGamepad = new GamepadEx(gamepad2);
     }

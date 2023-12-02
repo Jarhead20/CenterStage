@@ -1,38 +1,32 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+@Config
 public class IntakeSubsystem extends SubsystemBase {
     private final Motor intakeMotor;
-    private final Servo leftFlap;
-    private final Servo rightFlap;
 
     ColorRangeSensor colorSensorLeft;
     ColorRangeSensor colorSensorRight;
+    ElapsedTime rumbleTimer;
 
-
-    public static final double leftFlapOpen = 0.5;
-    public static final double leftFlapClosed = 0.0;
-    public static final double rightFlapOpen = 0.5;
-    public static final double rightFlapClosed = 0.0;
-
-
+    public static double rumbleWaitTimeMS = 1000;
 
 
     public IntakeSubsystem(HardwareMap hMap){
         intakeMotor = new Motor(hMap, "intake");
-        leftFlap = hMap.get(Servo.class, "leftFlap");
-        rightFlap = hMap.get(Servo.class, "rightFlap");
-        rightFlap.setDirection(Servo.Direction.REVERSE);
         intakeMotor.setInverted(true);
 
         colorSensorLeft = hMap.get(ColorRangeSensor.class, "leftSensor");
         colorSensorRight = hMap.get(ColorRangeSensor.class, "rightSensor");
-
+        rumbleTimer = new ElapsedTime();
 
     }
     @Override
@@ -42,7 +36,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-
+    }
+    public boolean pixelsReady(){
+        boolean sensors = colorSensorLeft.getDistance(DistanceUnit.CM) < 1 && colorSensorRight.getDistance(DistanceUnit.CM) < 1;
+        if(sensors && (rumbleTimer.milliseconds() > rumbleWaitTimeMS)){
+            rumbleTimer.reset();
+            return true;
+        }
+        return false;
     }
 
     public void intake() {

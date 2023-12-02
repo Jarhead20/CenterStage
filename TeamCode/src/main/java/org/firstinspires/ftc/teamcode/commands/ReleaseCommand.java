@@ -3,23 +3,24 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class GrabCommand extends CommandBase {
+public class ReleaseCommand extends CommandBase {
     private final ArmSubsystem arm;
     private ElapsedTime timer;
+    private boolean left;
 
-
-    public GrabCommand(ArmSubsystem arm) {
+    public ReleaseCommand(ArmSubsystem arm, boolean left) {
         this.arm = arm;
         addRequirements(arm);
+        this.left = left;
     }
 
     @Override
     public void initialize() {
-
-        arm.closeLeftGripper();
-        arm.closeRightGripper();
         timer = new ElapsedTime();
         timer.reset();
+        if(left)
+            arm.openLeftGripper();
+        else arm.openRightGripper();
     }
 
     @Override
@@ -33,6 +34,6 @@ public class GrabCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return timer.milliseconds()>300;
+        return timer.milliseconds()<100;
     }
 }

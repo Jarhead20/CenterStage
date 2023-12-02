@@ -28,6 +28,6 @@ public class LiftCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(lift.target - lift.getPosition()) < 10;
+        return Math.abs(lift.target - lift.getPosition()) < 30;
     }
 }

@@ -3,12 +3,17 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-
+@Config
 public class GrabPixelsCommand extends CommandBase {
     private final LiftSubsystem lift;
     private final IntakeSubsystem intake;
     private final ArmSubsystem arm;
     SequentialCommandGroup commandGroup;
+    public static double armAngleDown = 0.29;
+    public static double armAngleTransition = 0.2;
+    public static double wristAngleTransition = 0.9;
+    public static double wristGrabAngle = 0.75;
+
 
     public GrabPixelsCommand(LiftSubsystem lift, IntakeSubsystem intake, ArmSubsystem arm) {
         this.lift = lift;
@@ -20,11 +25,12 @@ public class GrabPixelsCommand extends CommandBase {
     @Override
     public void initialize() {
         commandGroup = new SequentialCommandGroup(
+
+                new ArmAngleCommand(arm, armAngleTransition, wristAngleTransition, true),
                 new LiftCommand(lift, 0),
-                new ArmAngleCommand(arm, 0, 0.3, true),
-                new GrabCommand(arm),
-                new ArmAngleCommand(arm, 0.3, 0, false),
-                new LiftCommand(lift, 40)
+                new ArmAngleCommand(arm, armAngleDown, wristGrabAngle, true),
+                new ReleaseCommand(arm, true),
+                new ReleaseCommand(arm, false)
         );
         commandGroup.schedule();
     }
@@ -40,6 +46,6 @@ public class GrabPixelsCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return commandGroup.isFinished();
+        return true;
     }
 }
