@@ -12,11 +12,21 @@ public class OuttakeCommand extends CommandBase {
     public static double armAngleUp = 0.12;
     public static double armAngleDepo = 0.82;
     public static double wristTransitionAngle = 1;
+    private boolean auto;
+    public static double autoArmAngle = 0.82;
+    public static double autoWristAngle = 0.82;
+    public static double autoDepositDistance = 400;
+
 
     public OuttakeCommand(LiftSubsystem lift, ArmSubsystem arm) {
+        this(lift, arm, false);
+    }
+
+    public OuttakeCommand(LiftSubsystem lift, ArmSubsystem arm, boolean auto){
         this.lift = lift;
         this.arm = arm;
         addRequirements(lift, arm);
+        this.auto = auto;
     }
 
     @Override
@@ -27,6 +37,12 @@ public class OuttakeCommand extends CommandBase {
                 new LiftCommand(lift, 600),
                 new ArmAngleCommand(arm, armAngleDepo, wristAngle, false)
         );
+        if(auto)
+            commandGroup.addCommands(
+                    new LiftCommand(lift, autoDepositDistance),
+                    new ArmAngleCommand(arm, autoArmAngle, autoWristAngle, false)
+            );
+
         commandGroup.schedule();
     }
 
