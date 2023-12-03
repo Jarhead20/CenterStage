@@ -8,7 +8,7 @@ public class StandbyCommand extends CommandBase {
     private final LiftSubsystem lift;
     private final ArmSubsystem arm;
     SequentialCommandGroup commandGroup;
-    public static double armAngleUp = 0.2;
+    public static double armAngleUp = 0.12;
 
     public static double wristTransitionAngle = 1;
 
@@ -22,7 +22,8 @@ public class StandbyCommand extends CommandBase {
     public void initialize() {
         commandGroup = new SequentialCommandGroup(
                 new GrabCommand(arm),
-                new ArmAngleCommand(arm, armAngleUp, wristTransitionAngle, true)
+                new ArmAngleCommand(arm, armAngleUp, wristTransitionAngle, true),
+                new LiftCommand(lift, 0)
         );
         commandGroup.schedule();
     }

@@ -8,9 +8,9 @@ public class OuttakeCommand extends CommandBase {
     private final LiftSubsystem lift;
     private final ArmSubsystem arm;
     SequentialCommandGroup commandGroup;
-    public static double wristAngle = 0.6;
-    public static double armAngleUp = 0.2;
-    public static double armAngleDepo = 0.69;
+    public static double wristAngle = 0.4;
+    public static double armAngleUp = 0.12;
+    public static double armAngleDepo = 0.82;
     public static double wristTransitionAngle = 1;
 
     public OuttakeCommand(LiftSubsystem lift, ArmSubsystem arm) {

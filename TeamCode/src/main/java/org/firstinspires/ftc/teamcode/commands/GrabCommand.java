@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class GrabCommand extends CommandBase {
     private final ArmSubsystem arm;
     private ElapsedTime timer;
-
+    private boolean waitOverride;
 
     public GrabCommand(ArmSubsystem arm) {
         this.arm = arm;
@@ -16,8 +16,8 @@ public class GrabCommand extends CommandBase {
     @Override
     public void initialize() {
 
-        arm.closeLeftGripper();
-        arm.closeRightGripper();
+        waitOverride = !arm.gripperOpen; // if gripper is already closed, don't wait
+        arm.closeBothGrippers();
         timer = new ElapsedTime();
         timer.reset();
     }
@@ -33,6 +33,6 @@ public class GrabCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return timer.milliseconds()>300;
+        return timer.milliseconds()>300 || waitOverride;
     }
 }

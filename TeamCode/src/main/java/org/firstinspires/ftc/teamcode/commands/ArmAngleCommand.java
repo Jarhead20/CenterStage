@@ -39,6 +39,6 @@ public class ArmAngleCommand extends CommandBase {
     public boolean isFinished() {
         if(!wait)
             return true;
-        return timer.milliseconds() > 500;
+        return timer.milliseconds() > 300;
     }
 }

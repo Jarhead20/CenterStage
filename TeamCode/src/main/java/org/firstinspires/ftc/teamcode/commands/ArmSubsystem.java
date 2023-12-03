@@ -24,6 +24,10 @@ public class ArmSubsystem extends SubsystemBase {
     public static double armOffset = 0.0;
     public static double wristOffset = 0.0;
 
+    public static boolean gripperOpen;
+    public static double minimumSlidePos = 300.0;
+    public static double minimumArmAngle = 0.25;
+
     public ArmSubsystem(HardwareMap hMap){
         leftArmServo = hMap.get(Servo.class, "leftArm");
         rightArmServo = hMap.get(Servo.class, "rightArm");
@@ -32,6 +36,7 @@ public class ArmSubsystem extends SubsystemBase {
         rightGripper = hMap.get(Servo.class, "rightGripper");
         rightArmServo.setDirection(Servo.Direction.REVERSE);
         rightGripper.setDirection(Servo.Direction.REVERSE);
+        gripperOpen = false;
     }
 
     public void tilt(double pitch){
@@ -56,14 +61,24 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void openLeftGripper(){
         leftGripper.setPosition(leftGripperOpen);
+        gripperOpen = true;
     }
-
     public void closeRightGripper(){
         rightGripper.setPosition(rightGripperClosed);
     }
 
     public void openRightGripper(){
         rightGripper.setPosition(rightGripperOpen);
+        gripperOpen = true;
+    }
+    public void closeBothGrippers(){
+        closeLeftGripper();
+        closeRightGripper();
+        gripperOpen = false;
+    }
+
+    public boolean goingToCollide(double slidePos){
+        return (slidePos < minimumSlidePos && armAngle < minimumArmAngle);
     }
 
 }

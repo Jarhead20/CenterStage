@@ -10,9 +10,9 @@ public class GrabPixelsCommand extends CommandBase {
     private final ArmSubsystem arm;
     SequentialCommandGroup commandGroup;
     public static double armAngleDown = 0.29;
-    public static double armAngleTransition = 0.2;
+    public static double armAngleTransition = 0.15;
     public static double wristAngleTransition = 0.9;
-    public static double wristGrabAngle = 0.75;
+    public static double wristGrabAngle = 0.71;
 
 
     public GrabPixelsCommand(LiftSubsystem lift, IntakeSubsystem intake, ArmSubsystem arm) {

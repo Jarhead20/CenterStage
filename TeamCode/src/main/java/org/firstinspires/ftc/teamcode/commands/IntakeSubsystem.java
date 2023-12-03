@@ -13,8 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class IntakeSubsystem extends SubsystemBase {
     private final Motor intakeMotor;
 
-    ColorRangeSensor colorSensorLeft;
-    ColorRangeSensor colorSensorRight;
+    public ColorRangeSensor colorSensorLeft;
+    public ColorRangeSensor colorSensorRight;
     ElapsedTime rumbleTimer;
 
     public static double rumbleWaitTimeMS = 1000;
