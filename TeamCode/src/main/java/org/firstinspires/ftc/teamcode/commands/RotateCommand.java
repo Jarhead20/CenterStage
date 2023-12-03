@@ -8,6 +8,7 @@ public class RotateCommand extends CommandBase {
     private final double m_angle;
     private final double m_speed;
     private final double rotate;
+    public static double angleTolerance = 3;
 
 
     /**
@@ -38,7 +39,7 @@ public class RotateCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_drive.getHeading()) >= m_angle || rotate == 0;
+        return Math.abs(m_drive.getHeading()-m_angle) < angleTolerance;
     }
 
 }
