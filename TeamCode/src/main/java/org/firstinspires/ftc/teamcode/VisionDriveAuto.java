@@ -39,7 +39,7 @@ public class VisionDriveAuto extends OpModeTemplate {
     public static double driveDistanceClose = 55;
     public static double driveDistanceFar = 48;
     public static double driveSpeed = 0.2;
-    public static double rotateAngle = 50;
+    public static double rotateAngle = -130;
     public static double backStageDistance = 50;
     public static double strafeDistance = 10;
     public static double strafeOffset = 10;
@@ -90,17 +90,20 @@ public class VisionDriveAuto extends OpModeTemplate {
         double driveDist;
         double newRotateAngle;
         double newStrafeDist;
+        double rotateDirection = 0;
         randomization = pipeline.getRandomization();
         switch(randomization){
             case LOCATION_1:
                 driveDist = driveDistanceClose;
                 newRotateAngle = rotateAngle;
                 newStrafeDist = strafeDistance-strafeOffset;
+                rotateDirection = -1;
                 break;
             case LOCATION_2:
                 driveDist = driveDistanceFar;
                 newRotateAngle = 0;
                 newStrafeDist = strafeDistance;
+                rotateDirection = -1;
                 break;
             case LOCATION_3:
                 driveDist = driveDistanceClose;
@@ -111,13 +114,14 @@ public class VisionDriveAuto extends OpModeTemplate {
                 driveDist = driveDistanceClose;
                 newRotateAngle = 0;
                 newStrafeDist = strafeDistance;
+                rotateDirection = 1;
                 break;
         }
         schedule(
                 new SequentialCommandGroup(
                     new StandbyCommand(lift, arm),
                     new DriveDistance(driveDist,1,0,driveSpeed, drive),
-                    new RotateCommand(Math.toRadians(rotateAngle), 1, driveSpeed, drive),
+                    new RotateCommand(Math.toRadians(rotateAngle), rotateDirection, driveSpeed, drive),
                     new OuttakeCommand(lift, arm, true),
                     new ReleaseCommand(arm, true), // put the purple pixel in the left gripper
                     //new WaitCommand(500),

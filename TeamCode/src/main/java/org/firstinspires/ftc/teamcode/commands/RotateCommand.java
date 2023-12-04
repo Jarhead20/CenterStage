@@ -39,7 +39,7 @@ public class RotateCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_drive.getHeading()-m_angle) < angleTolerance;
+        return Math.abs(m_drive.getHeading()-m_angle) < Math.toRadians(angleTolerance);
     }
 
 }

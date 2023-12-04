@@ -13,9 +13,9 @@ public class OuttakeCommand extends CommandBase {
     public static double armAngleDepo = 0.82;
     public static double wristTransitionAngle = 1;
     private boolean auto;
-    public static double autoArmAngle = 0.82;
+    public static double autoArmAngle = 0.6;
     public static double autoWristAngle = 0.82;
-    public static double autoDepositDistance = 400;
+    public static double autoDepositDistance = 180;
 
 
     public OuttakeCommand(LiftSubsystem lift, ArmSubsystem arm) {
@@ -34,6 +34,7 @@ public class OuttakeCommand extends CommandBase {
         commandGroup = new SequentialCommandGroup(
                 new GrabCommand(arm),
                 new ArmAngleCommand(arm, armAngleUp, wristTransitionAngle, true),
+                new ArmAngleCommand(arm, armAngleUp, 0.8, true),
                 new LiftCommand(lift, 600),
                 new ArmAngleCommand(arm, armAngleDepo, wristAngle, false)
         );
