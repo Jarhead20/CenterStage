@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
@@ -14,17 +16,17 @@ abstract public class OpModeTemplate extends CommandOpMode {
     protected GamepadEx secondaryGamepad;
 
     protected void initHardware(boolean isAuto) {
-
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         drive = new DriveSubsystem(hardwareMap, telemetry);
         drive.resetEncoders();
         lift = new LiftSubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap);
         climb = new ClimbSubsystem(hardwareMap);
-//        plane = new PlaneSubsystem(hardwareMap);
+        plane = new PlaneSubsystem(hardwareMap);
         arm = new ArmSubsystem(hardwareMap);
 
 //        register(intake, drive, lift, plane, climb, arm);
-        register(arm, intake, lift, climb, drive);
+        register(arm, intake, lift, climb, drive, plane);
         driverGamepad = new GamepadEx(gamepad1);
         secondaryGamepad = new GamepadEx(gamepad2);
     }

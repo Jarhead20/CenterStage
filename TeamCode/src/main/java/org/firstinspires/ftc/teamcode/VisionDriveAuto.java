@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.commands.ArmAngleCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveDistance;
+import org.firstinspires.ftc.teamcode.commands.GrabCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.LiftCommand;
 import org.firstinspires.ftc.teamcode.commands.OpModeTemplate;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.commands.OuttakeCommand;
 import org.firstinspires.ftc.teamcode.commands.ReleaseCommand;
 import org.firstinspires.ftc.teamcode.commands.RotateCommand;
 import org.firstinspires.ftc.teamcode.commands.StandbyCommand;
+import org.firstinspires.ftc.teamcode.commands.StrafeDistance;
 import org.firstinspires.ftc.teamcode.vision.TeamShippingElementPipeline;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -26,23 +28,28 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class VisionDriveAuto extends OpModeTemplate {
 
     private TeamShippingElementPipeline.Randomization randomization;
-    public static double r1x = 25;
-    public static double r1y = 90;
+    public static double r1x = 0;
+    public static double r1y = 120;
     public static double r2x = 150;
-    public static double r2y = 60;
-    public static double r3x = 260;
-    public static double r3y = 90;
+    public static double r2y = 120;
+    public static double r3x = 300;
+    public static double r3y = 130;
     private Point r1 = new Point(r1x, r1y);
     private Point r2 = new Point(r2x, r2y);
     private Point r3 = new Point(r3x, r3y);
 
     public static double driveDistanceClose = 55;
-    public static double driveDistanceFar = 48;
-    public static double driveSpeed = 0.2;
-    public static double rotateAngle = -130;
-    public static double backStageDistance = 50;
+    public static double driveDistanceFar = 44;
+    public static double driveSpeed = 0.4;
+    public static double rotateAngle = 40;
+    public static double backStageDistanceSegment1 = 55;
+    public static double backStageDistanceSegment2 = 10;
+    public static double driveSlowSpeed = 0.2;
     public static double strafeDistance = 10;
-    public static double strafeOffset = 10;
+    public static double strafeOffset = 20;
+    public static double parkStrafeDist = 40;
+    public static double parkDriveDist = 30;
+    public static double goAwayFromTheBackDropDistance = 10;
     private final Alliance alliance;
 
     public VisionDriveAuto(Alliance alliance){
@@ -52,6 +59,7 @@ public class VisionDriveAuto extends OpModeTemplate {
     @Override
     public void initialize() {
         initHardware(true);
+
         OpenCvWebcam webcam;
         TeamShippingElementPipeline pipeline = new TeamShippingElementPipeline(
                 alliance,
@@ -97,40 +105,49 @@ public class VisionDriveAuto extends OpModeTemplate {
                 driveDist = driveDistanceClose;
                 newRotateAngle = rotateAngle;
                 newStrafeDist = strafeDistance-strafeOffset;
-                rotateDirection = -1;
+                rotateDirection = 1;
                 break;
             case LOCATION_2:
                 driveDist = driveDistanceFar;
                 newRotateAngle = 0;
                 newStrafeDist = strafeDistance;
-                rotateDirection = -1;
+                rotateDirection = 0;
                 break;
             case LOCATION_3:
                 driveDist = driveDistanceClose;
-                newRotateAngle = strafeDistance+strafeOffset;
-                newStrafeDist = 1;
+                newRotateAngle = -rotateAngle-20;
+                newStrafeDist = strafeDistance+strafeOffset;
+                rotateDirection = -1;
                 break;
             default:
                 driveDist = driveDistanceClose;
                 newRotateAngle = 0;
                 newStrafeDist = strafeDistance;
-                rotateDirection = 1;
+                rotateDirection = 0;
                 break;
         }
         schedule(
                 new SequentialCommandGroup(
                     new StandbyCommand(lift, arm),
-                    new DriveDistance(driveDist,1,0,driveSpeed, drive),
-                    new RotateCommand(Math.toRadians(rotateAngle), rotateDirection, driveSpeed, drive),
+                    new DriveDistance(driveDist,-1,0,driveSpeed, drive),
+                    new RotateCommand(Math.toRadians(newRotateAngle), rotateDirection, driveSpeed, drive),
                     new OuttakeCommand(lift, arm, true),
+                    new WaitCommand(4000),
                     new ReleaseCommand(arm, true), // put the purple pixel in the left gripper
-                    //new WaitCommand(500),
-                    new LiftCommand(lift, 600),
-                    new ArmAngleCommand(arm, 0.82, 0.4, false),
-                    new RotateCommand(Math.toRadians(-90-newRotateAngle), alliance.adjust(1), driveSpeed, drive),
-                    new DriveDistance(backStageDistance, -1, 0, driveSpeed, drive),
-                    new DriveDistance(newStrafeDist, 0, 1, driveSpeed, drive),
-                    new ReleaseCommand(arm,false) // put the yellow pixel in the right gripper
+                    new WaitCommand(1000),
+                    new LiftCommand(lift, 300),
+                    new ArmAngleCommand(arm, 0.5, 0.2, true),
+                    new WaitCommand(1000),
+                    new RotateCommand(Math.toRadians(90), alliance.adjust(-1), driveSpeed, drive),
+                    new LiftCommand(lift, 300),
+                    new ArmAngleCommand(arm, 0.72, 0.45, true),
+                    new DriveDistance(backStageDistanceSegment1, -1, 0, driveSpeed, drive),
+                    new StrafeDistance(newStrafeDist, alliance.adjust(1), driveSpeed, drive),
+                    new DriveDistance(backStageDistanceSegment2, -1, 0, driveSlowSpeed, drive),
+                    new ReleaseCommand(arm,false), // put the yellow pixel in the right gripper
+                    new DriveDistance(goAwayFromTheBackDropDistance, 1, 0, driveSlowSpeed, drive),
+                    new StrafeDistance(parkStrafeDist, alliance.adjust(-1), driveSpeed, drive),
+                    new DriveDistance(parkDriveDist, -1, 0, driveSpeed, drive)
         ));
     }
 }

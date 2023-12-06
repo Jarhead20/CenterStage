@@ -1,15 +1,25 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
-
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.util.ElapsedTime;
+@Config
 public class RotateCommand extends CommandBase {
 
     private final DriveSubsystem m_drive;
     private final double m_angle;
     private final double m_speed;
     private final double rotate;
-    public static double angleTolerance = 3;
+    public static double angleTolerance = 5;
 
+    public static double kP = 4;
+    public static double kI = 0.02;
+    public static double kD = 0.25;
+
+    private PIDController pid;
+
+    private ElapsedTime timer;
 
     /**
      * Creates a new RotateCommand.
@@ -23,12 +33,13 @@ public class RotateCommand extends CommandBase {
         m_speed = speed;
         m_drive = drive;
         this.rotate = rotate;
+        this.pid = new PIDController(kP, kI, kD);
+        this.timer = new ElapsedTime();
     }
 
     @Override
     public void initialize() {
 //        m_drive.resetEncoders();
-        m_drive.drive(0, 0, rotate, m_speed);
     }
 
     @Override
@@ -36,10 +47,17 @@ public class RotateCommand extends CommandBase {
         m_drive.drive(0, 0, 0, 0);
     }
 
+    @Override
+    public void execute(){
+        pid.setPID(kP, kI, kD);
+        m_drive.drive(0, 0, rotate, Math.min(pid.calculate(m_drive.getHeading(), m_angle), m_speed));
+    }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_drive.getHeading()-m_angle) < Math.toRadians(angleTolerance);
+        if(!(Math.abs(m_drive.getHeading()-m_angle) < Math.toRadians(angleTolerance)))
+            timer.reset();
+        return timer.seconds() > 0.2;
     }
 
 }

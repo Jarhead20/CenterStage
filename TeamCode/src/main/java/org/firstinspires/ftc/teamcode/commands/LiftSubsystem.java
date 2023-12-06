@@ -27,13 +27,13 @@ public class LiftSubsystem extends SubsystemBase {
     public double liftOffset = 0;
 
     private PIDFController pidf;
-    public static double kP = 0.015;
+    public static double kP = 0.017;
     public static double kI = 0.001;
-    public static double kD = 0.0004;
-    public static double kF = 0.001;
+    public static double kD = 0.0003;
+    public static double kF = 0.0003;
     public static boolean disable = false;
-    public static double maxSlidePower = 0.5;
-    public static double minSlidePower = -0.3;
+    public static double maxSlidePower = 0.7;
+    public static double minSlidePower = -0.35;
 
     private boolean goingDown = false;
 
@@ -62,6 +62,7 @@ public class LiftSubsystem extends SubsystemBase {
     public void periodic(){
         pidf.setPIDF(kP, kI, kD, kF);
         pidf.setTolerance(30);
+
         telemetry.addData("target", target);
         telemetry.addData("current", leftMotor.getCurrentPosition());
 

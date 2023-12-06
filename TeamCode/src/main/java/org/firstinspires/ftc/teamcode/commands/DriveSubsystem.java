@@ -62,6 +62,20 @@ public class DriveSubsystem extends SubsystemBase {
         return dist;
     }
 
+    public double getStrafeDistance(){
+        double dist = ((((fLE.getPosition()) + fRE.getPosition() + (-bLE.getPosition()) + (-bRE.getPosition())) / 4.0) * WHEEL_DIAMETER * Math.PI)/fL.getCPR();
+        return dist;
+    }
+
+
+
+    @Override
+    public void periodic(){
+        telemetry.addData("distance", getAverageEncoderDistance());
+        telemetry.addData("strafe", getStrafeDistance());
+        telemetry.addData("heading", getHeading());
+    }
+
     /**
      * @return heading in radians
      */

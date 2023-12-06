@@ -42,28 +42,31 @@ public class MainTeleop extends OpModeTemplate {
     Trigger leftSensor;
     Trigger rightSensor;
     private Gamepad.RumbleEffect leftRumble = new Gamepad.RumbleEffect.Builder()
-            .addStep(1.0, 0.0, 100)
+            .addStep(0.0, 1.0, 300)
             .addStep(0.0, 0.0, 200)
             .build();
 
     private Gamepad.RumbleEffect rightRumble = new Gamepad.RumbleEffect.Builder()
-            .addStep(0.0, 1.0, 100)
+            .addStep(1.0, 0.0, 300)
             .addStep(0.0, 0.0, 200)
             .build();
 
     private Gamepad.RumbleEffect rumble = new Gamepad.RumbleEffect.Builder()
-            .addStep(1.0, 1.0, 100)
+            .addStep(1.0, 1.0, 300)
             .addStep(0.0, 0.0, 200)
             .build();
     @Override
     public void initialize() {
         initHardware(false);
 
+
         OuttakeCommand outtake = new OuttakeCommand(lift, arm);
         GrabPixelsCommand grab = new GrabPixelsCommand(lift, intake, arm);
 
         new GamepadButton(driverGamepad, GamepadKeys.Button.X).whenPressed(intake::intake).whenReleased(intake::stop);
         new GamepadButton(driverGamepad, GamepadKeys.Button.Y).whenPressed(intake::outtake).whenReleased(intake::stop);
+
+        new GamepadButton(driverGamepad, GamepadKeys.Button.BACK).toggleWhenPressed(plane::launch, plane::reset);
 
         new GamepadButton(secondaryGamepad, GamepadKeys.Button.DPAD_UP).whenPressed(() -> lift.liftOffset += 5);
         new GamepadButton(secondaryGamepad, GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> lift.liftOffset -= 5);
@@ -103,6 +106,7 @@ public class MainTeleop extends OpModeTemplate {
 //            driverGamepad.gamepad.rumble(1.0, 1.0, );
 //            schedule(new StandbyCommand(lift, arm));
 //        }
+
         telemetry.addData("rumble", driverGamepad.gamepad.isRumbling());
         lift.updateTarget(gamepad1.right_trigger - gamepad1.left_trigger);
         arm.update(gamepad2.left_stick_y*0.05, gamepad2.right_stick_y*0.05);

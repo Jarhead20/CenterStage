@@ -12,13 +12,13 @@ public class ArmSubsystem extends SubsystemBase {
     Servo leftGripper;
     Servo rightGripper;
 
-    public static double leftGripperOpen = 0;
-    public static double rightGripperOpen = 0;
-    public static double leftGripperClosed = 0.8;
-    public static double rightGripperClosed = 0.9;
+    public static double leftGripperOpen = 0.2;
+    public static double rightGripperOpen = 0.2;
+    public static double leftGripperClosed = 0;
+    public static double rightGripperClosed = 0;
     public static double servoFlipPos = 0.4;
-    public static double armAngle = 0.24;
-    public static double wristAngle = 0.9;
+    public static double armAngle;
+    public static double wristAngle;
     public static double leftOffset = 0.0;
     public static double rightOffset = 0.0;
     public static double armOffset = 0.0;
@@ -35,8 +35,13 @@ public class ArmSubsystem extends SubsystemBase {
         leftGripper = hMap.get(Servo.class, "leftGripper");
         rightGripper = hMap.get(Servo.class, "rightGripper");
         rightArmServo.setDirection(Servo.Direction.REVERSE);
+
         rightGripper.setDirection(Servo.Direction.REVERSE);
         gripperOpen = false;
+        wristAngle = 0.6;
+        armAngle = 0.24;
+        tilt(armAngle);
+        wristServo.setPosition(wristAngle+wristOffset);
     }
 
     public void tilt(double pitch){

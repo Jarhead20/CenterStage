@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class DriveDistance extends CommandBase {
 
@@ -9,7 +10,7 @@ public class DriveDistance extends CommandBase {
     private final double m_speed;
     private final double forward;
     private final double strafe;
-
+    private ElapsedTime cancelTimer;
     /**
      * Creates a new DriveDistance.
      *
@@ -23,12 +24,18 @@ public class DriveDistance extends CommandBase {
         m_drive = drive;
         this.forward = forward;
         this.strafe = strafe;
+        this.cancelTimer = new ElapsedTime();
     }
 
     @Override
     public void initialize() {
         m_drive.resetEncoders();
         m_drive.drive(strafe, -forward, 0, m_speed);
+        cancelTimer.reset();
+    }
+
+    @Override
+    public void execute(){
     }
 
     @Override
@@ -39,7 +46,7 @@ public class DriveDistance extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_drive.getAverageEncoderDistance()) >= m_distance;
+        return Math.abs(m_drive.getAverageEncoderDistance()) >= m_distance || cancelTimer.seconds() > 5;
     }
 
 }
