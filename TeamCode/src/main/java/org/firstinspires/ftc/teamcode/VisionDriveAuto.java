@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.commands.ArmAngleCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveDistance;
 import org.firstinspires.ftc.teamcode.commands.GrabCommand;
+import org.firstinspires.ftc.teamcode.commands.GrabPixelsCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.LiftCommand;
 import org.firstinspires.ftc.teamcode.commands.OpModeTemplate;
@@ -34,6 +35,7 @@ public class VisionDriveAuto extends OpModeTemplate {
     public static double r2y = 120;
     public static double r3x = 300;
     public static double r3y = 130;
+    public static double pos3Offset = 25;
     private Point r1 = new Point(r1x, r1y);
     private Point r2 = new Point(r2x, r2y);
     private Point r3 = new Point(r3x, r3y);
@@ -104,7 +106,7 @@ public class VisionDriveAuto extends OpModeTemplate {
             case LOCATION_1:
                 driveDist = driveDistanceClose;
                 newRotateAngle = rotateAngle;
-                newStrafeDist = strafeDistance-strafeOffset;
+                newStrafeDist = strafeDistance+strafeOffset;
                 rotateDirection = 1;
                 break;
             case LOCATION_2:
@@ -115,9 +117,9 @@ public class VisionDriveAuto extends OpModeTemplate {
                 break;
             case LOCATION_3:
                 driveDist = driveDistanceClose;
-                newRotateAngle = -rotateAngle-20;
-                newStrafeDist = strafeDistance+strafeOffset;
-                rotateDirection = -1;
+                newRotateAngle = -rotateAngle-pos3Offset;
+                newStrafeDist = strafeDistance-strafeOffset;
+                rotateDirection = 1;
                 break;
             default:
                 driveDist = driveDistanceClose;
@@ -146,7 +148,14 @@ public class VisionDriveAuto extends OpModeTemplate {
                     new DriveDistance(backStageDistanceSegment2, -1, 0, driveSlowSpeed, drive),
                     new ReleaseCommand(arm,false), // put the yellow pixel in the right gripper
                     new DriveDistance(goAwayFromTheBackDropDistance, 1, 0, driveSlowSpeed, drive),
-                    new StrafeDistance(parkStrafeDist, alliance.adjust(-1), driveSpeed, drive),
+                    new LiftCommand(lift, 600),
+                    new WaitCommand(1000),
+                    new GrabPixelsCommand(lift, intake, arm),
+                    new WaitCommand(3000),
+                    new RotateCommand(Math.toRadians(180), alliance.adjust(-1), driveSpeed, drive),
+                    //new StrafeDistance(parkStrafeDist, alliance.adjust(-1), driveSpeed, drive),
+                    new DriveDistance(parkStrafeDist, 1, 0, driveSpeed, drive),
+                    new RotateCommand(Math.toRadians(90), alliance.adjust(-1), driveSpeed, drive),
                     new DriveDistance(parkDriveDist, -1, 0, driveSpeed, drive)
         ));
     }
