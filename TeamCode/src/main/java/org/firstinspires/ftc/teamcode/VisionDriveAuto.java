@@ -47,9 +47,9 @@ public class VisionDriveAuto extends OpModeTemplate {
     public static double backStageDistanceSegment1 = 55;
     public static double backStageDistanceSegment2 = 10;
     public static double driveSlowSpeed = 0.2;
-    public static double strafeDistance = 10;
+    public static double strafeDistance = 20;
     public static double strafeOffset = 20;
-    public static double parkStrafeDist = 40;
+    public static double parkStrafeDist = 80;
     public static double parkDriveDist = 30;
     public static double goAwayFromTheBackDropDistance = 10;
     private final Alliance alliance;
@@ -152,9 +152,9 @@ public class VisionDriveAuto extends OpModeTemplate {
                     new WaitCommand(1000),
                     new GrabPixelsCommand(lift, intake, arm),
                     new WaitCommand(3000),
-                    new RotateCommand(Math.toRadians(180), alliance.adjust(-1), driveSpeed, drive),
+                    new RotateCommand(Math.toRadians(0), alliance.adjust(-1), driveSpeed, drive),
                     //new StrafeDistance(parkStrafeDist, alliance.adjust(-1), driveSpeed, drive),
-                    new DriveDistance(parkStrafeDist, 1, 0, driveSpeed, drive),
+                    new DriveDistance(parkStrafeDist, -1, 0, driveSpeed, drive),
                     new RotateCommand(Math.toRadians(90), alliance.adjust(-1), driveSpeed, drive),
                     new DriveDistance(parkDriveDist, -1, 0, driveSpeed, drive)
         ));
