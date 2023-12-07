@@ -10,7 +10,7 @@ public class StandbyCommand extends CommandBase {
     SequentialCommandGroup commandGroup;
     public static double armAngleUp = 0.05;
 
-    public static double wristTransitionAngle1 = 0.8;
+    public static double wristTransitionAngle1 = 0.9;
     public static double wristTransitionAngle2 = 0.8;
     public static double armAngleMiddle = 0.15;
 

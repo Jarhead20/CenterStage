@@ -14,6 +14,7 @@ public class OuttakeCommand extends CommandBase {
     public static double armAngleUp = 0.05;
     public static double armAngleDepo = 0.82;
     public static double wristTransitionAngle = 0.9;
+    public static double wristAngleToAvoidHitting = 0.6;
     private boolean auto;
     public static double autoArmAngle = 0.55;
     public static double autoWristAngle = 0.4;
@@ -36,7 +37,7 @@ public class OuttakeCommand extends CommandBase {
         commandGroup = new SequentialCommandGroup(
                 new GrabCommand(arm),
                 new ArmAngleCommand(arm, armAngleUp, wristTransitionAngle, true),
-                new ArmAngleCommand(arm, armAngleUp, 0.8, true),
+                new ArmAngleCommand(arm, armAngleUp, wristAngleToAvoidHitting, true),
                 new LiftCommand(lift, 600),
                 new ArmAngleCommand(arm, armAngleDepo, wristAngle, false)
         );

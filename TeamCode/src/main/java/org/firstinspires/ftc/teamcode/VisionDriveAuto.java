@@ -119,7 +119,7 @@ public class VisionDriveAuto extends OpModeTemplate {
                 driveDist = driveDistanceClose;
                 newRotateAngle = -rotateAngle-pos3Offset;
                 newStrafeDist = strafeDistance-strafeOffset;
-                rotateDirection = 1;
+                rotateDirection = -1;
                 break;
             default:
                 driveDist = driveDistanceClose;

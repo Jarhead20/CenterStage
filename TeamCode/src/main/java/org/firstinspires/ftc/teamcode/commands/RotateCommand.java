@@ -55,7 +55,7 @@ public class RotateCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(!(Math.abs(m_drive.getHeading()-m_angle) < Math.toRadians(angleTolerance)))
+        if(!(Math.abs(m_drive.getHeading()-m_angle) < Math.toRadians(angleTolerance)) || rotate == 0)
             timer.reset();
         return timer.seconds() > 0.2;
     }
