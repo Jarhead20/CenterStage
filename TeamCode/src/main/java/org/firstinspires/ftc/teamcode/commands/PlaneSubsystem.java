@@ -13,19 +13,25 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class PlaneSubsystem extends SubsystemBase {
 
     Servo servo;
-    public static double planeMin = 0.2;
-    public static double planeMax = 0.7;
+    public static double planeMin = 0.3;
+    public static double planeMax = 1;
+    public static boolean toggle = false;
 
     public PlaneSubsystem(HardwareMap hMap){
         servo = hMap.get(Servo.class, "plane");
         servo.setPosition(planeMin);
     }
-    public void launch(){
-        servo.setPosition(planeMax);
+    public void toggle(){
+        toggle = !toggle;
+
     }
 
-    public void reset(){
-        servo.setPosition(planeMin);
+    @Override
+    public void periodic(){
+        if(toggle)
+            servo.setPosition(planeMin);
+        else
+            servo.setPosition(planeMax);
     }
 
 

@@ -66,7 +66,7 @@ public class MainTeleop extends OpModeTemplate {
         new GamepadButton(driverGamepad, GamepadKeys.Button.X).whenPressed(intake::intake).whenReleased(intake::stop);
         new GamepadButton(driverGamepad, GamepadKeys.Button.Y).whenPressed(intake::outtake).whenReleased(intake::stop);
 
-        new GamepadButton(driverGamepad, GamepadKeys.Button.BACK).toggleWhenPressed(plane::launch, plane::reset);
+        new GamepadButton(driverGamepad, GamepadKeys.Button.BACK).whenActive(plane::toggle);
 
         new GamepadButton(secondaryGamepad, GamepadKeys.Button.DPAD_UP).whenPressed(() -> lift.liftOffset += 5);
         new GamepadButton(secondaryGamepad, GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> lift.liftOffset -= 5);
@@ -76,7 +76,6 @@ public class MainTeleop extends OpModeTemplate {
         new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_DOWN).whenPressed(grab).cancelWhenPressed(outtake);
         new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_UP).whenPressed(outtake).cancelWhenPressed(grab);
         new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_LEFT).whenPressed(new StandbyCommand(lift, arm));
-        new GamepadButton(driverGamepad, GamepadKeys.Button.BACK).toggleWhenPressed(() -> plane.launch(),  () -> plane.reset());
 
         leftSensor = new ColorSensorTrigger(intake.colorSensorLeft, 1);
         rightSensor = new ColorSensorTrigger(intake.colorSensorRight, 1);
@@ -86,7 +85,10 @@ public class MainTeleop extends OpModeTemplate {
         rightSensor.whenActive(new InstantCommand(() -> driverGamepad.gamepad.runRumbleEffect(rightRumble)))
                 .whenInactive(new InstantCommand(() -> driverGamepad.gamepad.stopRumble()));
 
-        leftSensor.and(rightSensor).whenActive(new StandbyCommand(lift, arm)).whenActive(new InstantCommand(() -> driverGamepad.gamepad.runRumbleEffect(rumble)))
+        leftSensor.and(rightSensor).whenActive(new StandbyCommand(lift, arm)).whenActive(new InstantCommand(() -> {
+            driverGamepad.gamepad.runRumbleEffect(rumble);
+            intake.stop();
+                }))
                 .whenInactive(new InstantCommand(() -> driverGamepad.gamepad.stopRumble()));
 
     }
