@@ -8,9 +8,9 @@ public class StandbyCommand extends CommandBase {
     private final LiftSubsystem lift;
     private final ArmSubsystem arm;
     SequentialCommandGroup commandGroup;
-    public static double armAngleUp = 0.12;
+    public static double armAngleUp = 0.05;
 
-    public static double wristTransitionAngle = 0.9;
+    public static double wristTransitionAngle = 1;
 
     public StandbyCommand(LiftSubsystem lift, ArmSubsystem arm) {
         this.lift = lift;

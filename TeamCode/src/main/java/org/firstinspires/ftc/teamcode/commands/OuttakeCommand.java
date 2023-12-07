@@ -11,7 +11,7 @@ public class OuttakeCommand extends CommandBase {
     private final ArmSubsystem arm;
     SequentialCommandGroup commandGroup;
     public static double wristAngle = 0.3;
-    public static double armAngleUp = 0.12;
+    public static double armAngleUp = 0.05;
     public static double armAngleDepo = 0.82;
     public static double wristTransitionAngle = 0.9;
     private boolean auto;
