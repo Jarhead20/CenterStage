@@ -20,6 +20,7 @@ public class RotateCommand extends CommandBase {
     private PIDController pid;
 
     private ElapsedTime timer;
+    private ElapsedTime timeout;
 
     /**
      * Creates a new RotateCommand.
@@ -35,11 +36,13 @@ public class RotateCommand extends CommandBase {
         this.rotate = rotate;
         this.pid = new PIDController(kP, kI, kD);
         this.timer = new ElapsedTime();
+        this.timeout = new ElapsedTime();
     }
 
     @Override
     public void initialize() {
 //        m_drive.resetEncoders();
+        timeout.reset();
     }
 
     @Override
@@ -57,7 +60,7 @@ public class RotateCommand extends CommandBase {
     public boolean isFinished() {
         if(!(Math.abs(m_drive.getHeading()-m_angle) < Math.toRadians(angleTolerance)) || rotate == 0)
             timer.reset();
-        return timer.seconds() > 0.2;
+        return timer.seconds() > 0.2 || timeout.seconds() > 5;
     }
 
 }

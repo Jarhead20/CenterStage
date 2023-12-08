@@ -16,7 +16,7 @@ public class OuttakeCommand extends CommandBase {
     public static double wristTransitionAngle = 0.9;
     public static double wristAngleToAvoidHitting = 0.6;
     private boolean auto;
-    public static double autoArmAngle = 0.55;
+    public static double autoArmAngle = 0.5;
     public static double autoWristAngle = 0.4;
     public static double autoDepositDistance = 220;
 
@@ -34,18 +34,24 @@ public class OuttakeCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        commandGroup = new SequentialCommandGroup(
-                new GrabCommand(arm),
-                new ArmAngleCommand(arm, armAngleUp, wristTransitionAngle, true),
-                new ArmAngleCommand(arm, armAngleUp, wristAngleToAvoidHitting, true),
-                new LiftCommand(lift, 600),
-                new ArmAngleCommand(arm, armAngleDepo, wristAngle, false)
-        );
-        if(auto)
-            commandGroup.addCommands(
+        if(!auto)
+            commandGroup = new SequentialCommandGroup(
+                    new GrabCommand(arm),
+                    new ArmAngleCommand(arm, armAngleUp, wristTransitionAngle, true),
+                    new ArmAngleCommand(arm, armAngleUp, wristAngleToAvoidHitting, true),
+                    new LiftCommand(lift, 600),
+                    new ArmAngleCommand(arm, armAngleDepo, wristAngle, false)
+            );
+        else
+            commandGroup = new SequentialCommandGroup(
+                    new GrabCommand(arm),
+                    new ArmAngleCommand(arm, armAngleUp, wristTransitionAngle, true),
+                    new ArmAngleCommand(arm, armAngleUp, wristAngleToAvoidHitting, true),
+                    new LiftCommand(lift, 400),
+                    new ArmAngleCommand(arm, autoArmAngle, autoWristAngle, true),
                     new WaitCommand(200),
-                    new LiftCommand(lift, autoDepositDistance),
-                    new ArmAngleCommand(arm, autoArmAngle, autoWristAngle, false)
+                    new LiftCommand(lift, autoDepositDistance)
+//                    new ArmAngleCommand(arm, autoArmAngle, autoWristAngle, false)
             );
 
         commandGroup.schedule();

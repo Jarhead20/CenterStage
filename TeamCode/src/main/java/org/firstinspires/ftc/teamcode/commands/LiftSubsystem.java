@@ -29,8 +29,8 @@ public class LiftSubsystem extends SubsystemBase {
     private PIDFController pidf;
     public static double kP = 0.017;
     public static double kI = 0.001;
-    public static double kD = 0.0003;
-    public static double kF = 0.0003;
+    public static double kD = 0.0002;
+    public static double kF = 0.001;
     public static boolean disable = false;
     public static double maxSlidePower = 0.7;
     public static double minSlidePower = -0.35;

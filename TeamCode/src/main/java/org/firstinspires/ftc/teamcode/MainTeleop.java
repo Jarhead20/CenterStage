@@ -111,8 +111,8 @@ public class MainTeleop extends OpModeTemplate {
 
         telemetry.addData("rumble", driverGamepad.gamepad.isRumbling());
         lift.updateTarget(gamepad1.right_trigger - gamepad1.left_trigger);
-        arm.update(gamepad2.left_stick_y*0.05, gamepad2.right_stick_y*0.05);
-        climb.control(gamepad2.left_trigger - gamepad2.right_trigger);
+        arm.update(gamepad2.right_stick_y*0.05, gamepad2.left_stick_y*0.05);
+        climb.control(gamepad2.right_trigger - gamepad2.left_trigger);
 
 
     }

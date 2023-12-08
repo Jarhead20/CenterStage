@@ -13,9 +13,9 @@ public class ArmSubsystem extends SubsystemBase {
     Servo rightGripper;
 
     public static double leftGripperOpen = 0.2;
-    public static double rightGripperOpen = 0.2;
-    public static double leftGripperClosed = 0;
-    public static double rightGripperClosed = 0;
+    public static double rightGripperOpen = 0.5;
+    public static double leftGripperClosed = 0.02;
+    public static double rightGripperClosed = 0.27;
     public static double servoFlipPos = 0.4;
     public static double armAngle;
     public static double wristAngle;
